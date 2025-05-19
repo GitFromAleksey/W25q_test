@@ -408,11 +408,6 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_msp.c</FilePath>
             </File>
-            <File>
-              <FileName>w25qxxx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Core\Src\w25qxxx.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -512,6 +507,16 @@
               <FileName>system_stm32f4xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/system_stm32f4xx.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>w25qxx</GroupName>
+          <Files>
+            <File>
+              <FileName>w25qxxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\w25qxx\w25qxxx.c</FilePath>
             </File>
           </Files>
         </Group>

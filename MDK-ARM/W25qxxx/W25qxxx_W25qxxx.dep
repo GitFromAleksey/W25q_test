@@ -1,7 +1,7 @@
 Dependencies for Project 'W25qxxx', Target 'W25qxxx': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
 F (startup_stm32f407xx.s)(0x68258B21)(--cpu Cortex-M4.fp.sp -g --apcs=interwork -I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include--pd "__UVISION_VERSION SETA 534" --pd "_RTE_ SETA 1" --pd "STM32F407xx SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f407xx.lst --xref -o w25qxxx\startup_stm32f407xx.o --depend w25qxxx\startup_stm32f407xx.d)
-F (../Core/Src/main.c)(0x6826BC6A)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\main.o --omf_browse w25qxxx\main.crf --depend w25qxxx\main.d)
+F (../Core/Src/main.c)(0x682AA484)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\main.o --omf_browse w25qxxx\main.crf --depend w25qxxx\main.d)
 I (../Core/Inc/main.h)(0x68258B1F)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x67F5EDB3)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68258B1E)
@@ -32,7 +32,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x67F5EDB3)
-I (../Core/Src/w25qxxx.h)(0x6826BC5A)
+I (../Core/Src/../../w25qxx/w25qxxx.h)(0x6826BC5A)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5E8E8312)
 F (../Core/Src/stm32f4xx_it.c)(0x68258B1E)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\stm32f4xx_it.o --omf_browse w25qxxx\stm32f4xx_it.crf --depend w25qxxx\stm32f4xx_it.d)
 I (../Core/Inc/main.h)(0x68258B1F)
@@ -97,13 +97,6 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x67F5EDB3)
-F (..\Core\Src\w25qxxx.c)(0x682AA0A4)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\w25qxxx.o --omf_browse w25qxxx\w25qxxx.crf --depend w25qxxx\w25qxxx.d)
-I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E8312)
-I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E8312)
-I (..\Core\Src\w25qxxx_defs.h)(0x6826C2B7)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E8312)
-I (..\Core\Src\w25qxxx.h)(0x6826BC5A)
-I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5E8E8312)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c)(0x67F5EDB3)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\stm32f4xx_hal_spi.o --omf_browse w25qxxx\stm32f4xx_hal_spi.crf --depend w25qxxx\stm32f4xx_hal_spi.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x67F5EDB3)
 I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68258B1E)
@@ -644,6 +637,13 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x67F5EDB3)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x67F5EDB3)
+F (..\w25qxx\w25qxxx.c)(0x682AA0A4)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\w25qxxx.o --omf_browse w25qxxx\w25qxxx.crf --depend w25qxxx\w25qxxx.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E8312)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E8312)
+I (..\w25qxx\w25qxxx_defs.h)(0x6826C2B7)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E8312)
+I (..\w25qxx\w25qxxx.h)(0x6826BC5A)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x5E8E8312)
 F (C:\Users\Admini\AppData\Local\Arm\Packs\Keil\ARM_Compiler\1.6.3\Source\retarget_io.c)(0x584E700E)(--c99 -c --cpu Cortex-M4.fp.sp -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_W25qxxx-IC:\Users\Admini\AppData\Local\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include-IC:\Users\Admini\AppData\Local\Arm\Packs\Keil\STM32F4xx_DFP\2.17.1\Drivers\CMSIS\Device\ST\STM32F4xx\Include-D__UVISION_VERSION="534" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o w25qxxx\retarget_io.o --omf_browse w25qxxx\retarget_io.crf --depend w25qxxx\retarget_io.d)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E8312)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E8312)

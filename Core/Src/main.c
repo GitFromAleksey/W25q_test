@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "w25qxxx.h"
+#include "../../w25qxx/w25qxxx.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

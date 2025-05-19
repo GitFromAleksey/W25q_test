@@ -3,7 +3,7 @@
 <title>Static Call Graph - [W25qxxx\W25qxxx.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image W25qxxx\W25qxxx.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon May 19 10:08:25 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon May 19 10:24:54 2025
 <BR><P>
 <H3>Maximum Stack Usage =        208 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -589,11 +589,11 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_printf_char_file
 </UL>
-<BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
-<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
 </UL>
 
 <P><STRONG><a name="[8c]"></a>__printf</STRONG> (Thumb, 104 bytes, Stack size 24 bytes, __printf.o(.text))
@@ -1092,9 +1092,9 @@ Global Symbols
 <P><STRONG><a name="[c0]"></a>HAL_RCC_ClockConfig</STRONG> (Thumb, 288 bytes, Stack size 32 bytes, stm32f4xx_hal_rcc.o(i.HAL_RCC_ClockConfig))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = HAL_RCC_ClockConfig &rArr; HAL_RCC_GetSysClockFreq &rArr; __aeabi_uldivmod
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetSysClockFreq
+<BR>[Calls]<UL><LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetSysClockFreq
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_InitTick
-<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
@@ -1143,8 +1143,8 @@ Global Symbols
 <P><STRONG><a name="[c8]"></a>HAL_SPI_TransmitReceive</STRONG> (Thumb, 496 bytes, Stack size 56 bytes, stm32f4xx_hal_spi.o(i.HAL_SPI_TransmitReceive))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = HAL_SPI_TransmitReceive &rArr; SPI_EndRxTxTransaction &rArr; SPI_WaitFlagStateUntilTimeout
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_EndRxTxTransaction
-<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<BR>[Calls]<UL><LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_EndRxTxTransaction
 </UL>
 <BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_TxRxCB
 </UL>
@@ -1251,7 +1251,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 168 + Unknown Stack Size
 <LI>Call Chain = W25Qxxx_DeviceInit &rArr; W25Qxxx_Read_Unique_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
+<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
 <LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Rx
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
@@ -1259,7 +1260,6 @@ Global Symbols
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
 <LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
 <LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -1365,102 +1365,6 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d8]"></a>W25Qxxx_CsDisable</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, w25qxxx.o(i.W25Qxxx_CsDisable))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = W25Qxxx_CsDisable
-</UL>
-<BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
-<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
-<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
-<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
-<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[dd]"></a>W25Qxxx_CsEnable</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, w25qxxx.o(i.W25Qxxx_CsEnable))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = W25Qxxx_CsEnable
-</UL>
-<BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
-<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
-<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
-<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
-<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[d9]"></a>W25Qxxx_Power_Up</STRONG> (Thumb, 72 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Power_Up))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
-<LI>Call Chain = W25Qxxx_Power_Up &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
-</UL>
-<BR>[Calls]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
-<LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Rx
-<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-</UL>
-<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[db]"></a>W25Qxxx_Read_JEDEC_ID</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Read_JEDEC_ID))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
-<LI>Call Chain = W25Qxxx_Read_JEDEC_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
-</UL>
-<BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
-<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-</UL>
-<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[da]"></a>W25Qxxx_Read_Manu_Dev_ID</STRONG> (Thumb, 88 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Read_Manu_Dev_ID))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
-<LI>Call Chain = W25Qxxx_Read_Manu_Dev_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
-</UL>
-<BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
-<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-</UL>
-<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[dc]"></a>W25Qxxx_Read_Unique_ID</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Read_Unique_ID))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
-<LI>Call Chain = W25Qxxx_Read_Unique_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
-</UL>
-<BR>[Calls]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
-<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
-<LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Rx
-<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
-</UL>
-<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[df]"></a>W25Qxxx_SPI_Rx</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, w25qxxx.o(i.W25Qxxx_SPI_Rx))
-<BR><BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
-<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
-<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
-<P><STRONG><a name="[e0]"></a>W25Qxxx_SPI_RxTx</STRONG> (Thumb, 42 bytes, Stack size 24 bytes, w25qxxx.o(i.W25Qxxx_SPI_RxTx))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = W25Qxxx_SPI_RxTx
-</UL>
-<BR>[Called By]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
-<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
-<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
-<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
-</UL>
-
-<P><STRONG><a name="[de]"></a>W25Qxxx_SPI_Tx</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, w25qxxx.o(i.W25Qxxx_SPI_Tx))
-<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = W25Qxxx_SPI_Tx &rArr; W25Qxxx_SPI_RxTx
-</UL>
-<BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
-</UL>
-<BR>[Called By]<UL><LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
-<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
-<LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
-</UL>
-
 <P><STRONG><a name="[c9]"></a>SPI_EndRxTxTransaction</STRONG> (Thumb, 98 bytes, Stack size 24 bytes, stm32f4xx_hal_spi.o(i.SPI_EndRxTxTransaction))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SPI_EndRxTxTransaction &rArr; SPI_WaitFlagStateUntilTimeout
 </UL>
@@ -1506,6 +1410,102 @@ Local Symbols
 <LI><a href="#[d4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_EndRxTransfer
 </UL>
 <BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit
+</UL>
+
+<P><STRONG><a name="[d8]"></a>W25Qxxx_CsDisable</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, w25qxxx.o(i.W25Qxxx_CsDisable))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = W25Qxxx_CsDisable
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
+<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
+<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
+</UL>
+
+<P><STRONG><a name="[dd]"></a>W25Qxxx_CsEnable</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, w25qxxx.o(i.W25Qxxx_CsEnable))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = W25Qxxx_CsEnable
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
+<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
+<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
+</UL>
+
+<P><STRONG><a name="[d9]"></a>W25Qxxx_Power_Up</STRONG> (Thumb, 72 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Power_Up))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
+<LI>Call Chain = W25Qxxx_Power_Up &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
+</UL>
+<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
+<LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Rx
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+</UL>
+
+<P><STRONG><a name="[db]"></a>W25Qxxx_Read_JEDEC_ID</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Read_JEDEC_ID))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
+<LI>Call Chain = W25Qxxx_Read_JEDEC_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
+</UL>
+<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+</UL>
+
+<P><STRONG><a name="[da]"></a>W25Qxxx_Read_Manu_Dev_ID</STRONG> (Thumb, 88 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Read_Manu_Dev_ID))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
+<LI>Call Chain = W25Qxxx_Read_Manu_Dev_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
+</UL>
+<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+</UL>
+
+<P><STRONG><a name="[dc]"></a>W25Qxxx_Read_Unique_ID</STRONG> (Thumb, 92 bytes, Stack size 16 bytes, w25qxxx.o(i.W25Qxxx_Read_Unique_ID))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144 + Unknown Stack Size
+<LI>Call Chain = W25Qxxx_Read_Unique_ID &rArr; __2printf &rArr; _printf_char_file &rArr; _printf_char_common &rArr; __printf
+</UL>
+<BR>[Calls]<UL><LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
+<LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
+<LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
+<LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Rx
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsEnable
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_CsDisable
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+</UL>
+
+<P><STRONG><a name="[df]"></a>W25Qxxx_SPI_Rx</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, w25qxxx.o(i.W25Qxxx_SPI_Rx))
+<BR><BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
+</UL>
+
+<P><STRONG><a name="[e0]"></a>W25Qxxx_SPI_RxTx</STRONG> (Thumb, 42 bytes, Stack size 24 bytes, w25qxxx.o(i.W25Qxxx_SPI_RxTx))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = W25Qxxx_SPI_RxTx
+</UL>
+<BR>[Called By]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_Tx
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
+<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Manu_Dev_ID
+<LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_JEDEC_ID
+</UL>
+
+<P><STRONG><a name="[de]"></a>W25Qxxx_SPI_Tx</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, w25qxxx.o(i.W25Qxxx_SPI_Tx))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = W25Qxxx_SPI_Tx &rArr; W25Qxxx_SPI_RxTx
+</UL>
+<BR>[Calls]<UL><LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_SPI_RxTx
+</UL>
+<BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_DeviceInit
+<LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Read_Unique_ID
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W25Qxxx_Power_Up
 </UL>
 
 <P><STRONG><a name="[68]"></a>_printf_input_char</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, _printf_char_common.o(.text))
