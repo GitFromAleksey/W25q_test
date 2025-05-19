@@ -860,6 +860,102 @@ static void W25Qxxx_Write_Enable_SR(void)
   W25Qxxx_CsDisable();
 }
 // ----------------------------------------------------------------------------
+/** ###########################################################################
+  * @brief  Chip Erase
+  * @retval status 0:passed  1:failed
+  */
+uint8_t W25Qxxx_EraseChip(void)
+{
+  if (W25Qxxx_Device_ID == 0)
+    return 1; // w25qxx Unknown
+
+  W25Qxxx_WaitForWriteEnd();
+
+  W25Qxxx_Write_Enable();
+
+  W25Qxxx_CsEnable();
+  W25Qxxx_SPI_Tx(CMD_Erase_Chip);
+  W25Qxxx_CsDisable();
+
+  W25Qxxx_WaitForWriteEnd();
+
+  return 0;
+}
+// ----------------------------------------------------------------------------
+/** ###########################################################################
+  * @brief  Sector erase 4KB
+  * @param  SectorAddr: [in] 0 ~ W25Qxxx_SectorCount-1
+  * @retval status 0:passed  1:failed
+  */
+uint8_t W25Qxxx_EraseSector(uint32_t SectorAddr)
+{
+  if (W25Qxxx_Device_ID == 0)
+    return 1; // w25qxx Unknown
+
+  W25Qxxx_WaitForWriteEnd();
+
+  SectorAddr = SectorAddr * W25Qxxx_SectorSize;
+  W25Qxxx_Write_Enable();
+
+  W25Qxxx_CsEnable();
+
+  if (W25Qxxx_Device_ID >= W25Q256)
+  {
+    W25Qxxx_SPI_Tx(CMD_Erase_Sector_4_Byte_Addr);
+    W25Qxxx_SPI_Tx((SectorAddr & 0xFF000000) >> 24);
+  }
+  else
+  {
+    W25Qxxx_SPI_Tx(CMD_Erase_Sector);
+  }
+
+  W25Qxxx_SPI_Tx((SectorAddr & 0xFF0000) >> 16);
+  W25Qxxx_SPI_Tx((SectorAddr & 0xFF00) >> 8);
+  W25Qxxx_SPI_Tx( SectorAddr & 0xFF);
+  W25Qxxx_CsDisable();
+
+  W25Qxxx_WaitForWriteEnd();
+
+  return 0;
+}
+// ----------------------------------------------------------------------------
+/** ###########################################################################
+  * @brief Erase block 64KB
+  * @param BlockAddr: [in] 0 ~ W25Qxxx_BlockCount-1
+  * @retval status 0:passed  1:failed
+  */
+uint8_t W25Qxxx_EraseBlock(uint32_t BlockAddr)
+{
+  if (W25Qxxx_Device_ID == 0)
+    return 1; // w25qxx Unknown
+
+  W25Qxxx_WaitForWriteEnd();
+
+  BlockAddr = BlockAddr * W25Qxxx_BlockSize;
+  W25Qxxx_Write_Enable();
+
+  W25Qxxx_CsEnable();
+
+  if (W25Qxxx_Device_ID >= W25Q256)
+  {
+    W25Qxxx_SPI_Tx(CMD_Erase_Block_64K_4_Byte_Addr);
+    W25Qxxx_SPI_Tx((BlockAddr & 0xFF000000) >> 24);
+  }
+  else
+  {
+    W25Qxxx_SPI_Tx(CMD_Erase_Block_64K);
+  }
+
+  W25Qxxx_SPI_Tx((BlockAddr & 0xFF0000) >> 16);
+  W25Qxxx_SPI_Tx((BlockAddr & 0xFF00) >> 8);
+  W25Qxxx_SPI_Tx(BlockAddr & 0xFF);
+  W25Qxxx_CsDisable();
+
+  W25Qxxx_WaitForWriteEnd();
+
+  return 0;
+}
+// ----------------------------------------------------------------------------
 void Test(void)
 {
 //  static uint8_t Buffer[W25QXXX_PAGESIZE];
@@ -1026,6 +1122,84 @@ void Test(void)
 //  for(int i = 0; i < cnt; ++i)
 //    printf("%X,", wr_byte_buf[i]);
 //  printf("\r\n");
+
+
+//  uint8_t res;
+
+//  res = W25Qxxx_EraseChip();
+//  
+//  printf("W25Qxxx_EraseChip: %d\r\n", res);
+
+
+//// ------------------------------ проверка стирания сктора
+//#define SECTOR_SIZE    (W25QXXX_PAGES_IN_SECTOR * W25QXXX_PAGESIZE)
+//#define BUF_SIZE    256
+//#define SECTOR_NUM  4
+//  uint8_t wr_byte_buf[BUF_SIZE];
+//  uint16_t cnt    = BUF_SIZE;
+//  uint32_t sector = SECTOR_NUM;
+//  uint32_t offset = BUF_SIZE;
+
+//  W25Qxxx_ReadSector(wr_byte_buf, sector, offset, cnt);
+//  printf("Read sector num: %d, size: %d\r\n", sector, cnt);
+//  for(int i = 0; i < cnt; ++i)
+//    printf("%X,", wr_byte_buf[i]);
+//  printf("\r\n");
+
+//  for(int i = 0; i < cnt; ++i)
+//    wr_byte_buf[i] = i;
+//  W25Qxxx_WriteSector(wr_byte_buf, sector, offset, cnt);
+
+//  W25Qxxx_ReadSector(wr_byte_buf, sector, offset, cnt);
+//  printf("Read sector num: %d, size: %d\r\n", sector, cnt);
+//  for(int i = 0; i < cnt; ++i)
+//    printf("%X,", wr_byte_buf[i]);
+//  printf("\r\n");
+
+//  printf("W25Qxxx_EraseSector\r\n");
+//  W25Qxxx_EraseSector(sector);
+
+//  W25Qxxx_ReadSector(wr_byte_buf, sector, offset, cnt);
+//  printf("Read sector num: %d, size: %d\r\n", sector, cnt);
+//  for(int i = 0; i < cnt; ++i)
+//    printf("%X,", wr_byte_buf[i]);
+//  printf("\r\n");
+//// ------------------------------
+
+//// ------------------------------ проверка стирания блока
+//  uint8_t wr_byte_buf[256];
+//  uint16_t cnt    = 256;
+//  uint32_t block  = 1;
+//  uint32_t offset = 0;
+
+//  W25Qxxx_ReadBlock(wr_byte_buf, block, offset, cnt);
+//  printf("W25Qxxx_ReadBlock addr: %d\r\n", block);
+//  for(int i = 0; i < cnt; ++i)
+//    printf("%X,", wr_byte_buf[i]);
+//  printf("\r\n");
+//  
+//  printf("W25Qxxx_WriteBlock: %d\r\n", block);
+//  for(int i = 0; i < cnt; ++i)
+//    wr_byte_buf[i] = i;
+//  printf("\r\n");
+//  W25Qxxx_WriteBlock(wr_byte_buf, block, offset, cnt);
+
+//  W25Qxxx_ReadBlock(wr_byte_buf, block, offset, cnt);
+//  printf("W25Qxxx_ReadBlock addr: %d\r\n", block);
+//  for(int i = 0; i < cnt; ++i)
+//    printf("%X,", wr_byte_buf[i]);
+//  printf("\r\n");
+
+//  printf("W25Qxxx_EraseBlock: %d\r\n", block);
+//  W25Qxxx_EraseBlock(block);
+
+//  W25Qxxx_ReadBlock(wr_byte_buf, block, offset, cnt);
+//  printf("W25Qxxx_ReadBlock addr: %d\r\n", block);
+//  for(int i = 0; i < cnt; ++i)
+//    printf("%X,", wr_byte_buf[i]);
+//  printf("\r\n");
+
+//// ------------------------------ проверка стирания блока
 
 }
 // ----------------------------------------------------------------------------
