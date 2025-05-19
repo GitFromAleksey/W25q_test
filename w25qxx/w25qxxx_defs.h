@@ -174,65 +174,63 @@ typedef enum
 
 }W25QxxxSRBitMask_TypeDef;
 
+#define INIT_CHECK                                   \
+                  do                                 \
+                  {                                  \
+                      if(!Is_W25Qxxx_Init)           \
+                          return w24qxxx_init_error; \
+                  } while( 0 )
 
-//uint8_t W25Qxxx_Read_REG_x(uint8_t reg_x);
-//void W25Qxxx_Write_REG_x(uint8_t reg_x, uint8_t data);
+extern bool Is_W25Qxxx_Init;
+extern w24qxxx_init_t INIT;
 
-//uint8_t W25Qxxx_Init(void);
-//uint8_t W25Qxxx_EraseChip(void);
-//uint8_t W25Qxxx_EraseSector(uint32_t SectorAddr);
-//uint8_t W25Qxxx_EraseBlock(uint32_t BlockAddr);
-//uint8_t W25Qxxx_WriteByte(const uint8_t pBuffer, uint32_t WriteAddr_inBytes);
-//uint8_t W25Qxxx_WritePage(const uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_PageSize);
-//uint8_t W25Qxxx_WriteSector(const uint8_t *pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_SectorSize);
-//uint8_t W25Qxxx_WriteBlock(const uint8_t *pBuffer, uint32_t Block_Address, uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_BlockSize);
-//uint8_t W25Qxxx_ReadByte(uint8_t *pBuffer, uint32_t Bytes_Address);
-//uint8_t W25Qxxx_ReadBytes(uint8_t *pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead);
-//uint8_t W25Qxxx_ReadPage(uint8_t *pBuffer, uint32_t Page_Address, uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_PageSize);
-//uint8_t W25Qxxx_ReadSector(uint8_t *pBuffer, uint32_t Sector_Address, uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_SectorSize);
-//uint8_t W25Qxxx_ReadBlock(uint8_t *pBuffer, uint32_t Block_Address, uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_BlockSize);
+extern uint8_t   W25Qxxx_Device_ID;
+//extern uint16_t  W25Qxxx_Manufacturer_Device_ID;
+//extern uint32_t  W25Qxxx_JEDEC_ID;
+//extern uint8_t   W25Qxxx_UniqID[8];
+//extern uint32_t  W25Qxxx_BlockCount;
+extern uint16_t  W25Qxxx_PageSize;
+extern uint32_t  W25Qxxx_SectorSize;
+//extern uint32_t  W25Qxxx_SectorCount;
+//extern uint32_t  W25Qxxx_PageCount;
+extern uint32_t  W25Qxxx_BlockSize;
+//extern uint32_t  W25Qxxx_CapacityInKiloByte;
 
+// common functions prototypes for all
+w24qxxx_statusTypeDef W25Qxxx_SPI_RxTx(uint8_t data, uint8_t *pret);
+w24qxxx_statusTypeDef W25Qxxx_SPI_Tx(uint8_t data);
+w24qxxx_statusTypeDef W25Qxxx_SPI_Rx(uint8_t data, uint8_t *pret);
+w24qxxx_statusTypeDef W25Qxxx_CsEnable(void);
+w24qxxx_statusTypeDef W25Qxxx_CsDisable(void);
+int8_t W25Qxxx_WaitForWriteEnd(void);
+void W25Qxxx_Write_Enable(void);
+void W25Qxxx_Write_Enable_SR(void);
+uint32_t W25Qxxx_BlockToPage(uint32_t BlockAddress);
+uint32_t W25Qxxx_SectorToPage(uint32_t SectorAddress);
 
-//// #########################################################################################
-///* ---------------- FATFs disk io functions --------------------------------------------- */
-//#define EN_SPI_FLASH_DISK_IO   1  //1:enable spi_flash_disk_io 0:disable
+// errase functions prototypes
+uint8_t W25Qxxx_EraseChip(void);
+uint8_t W25Qxxx_EraseSector(uint32_t SectorAddr);
+uint8_t W25Qxxx_EraseBlock(uint32_t BlockAddr);
 
-//#if   EN_SPI_FLASH_DISK_IO
-//#include "diskio.h"
-///**
-//  * @brief  Disk IO Driver structure definition
-//  */
-//typedef struct
-//{
-//  DSTATUS (*disk_initialize) (void);                     /*!< Initialize Disk Drive                     */
-//  DSTATUS (*disk_status)     (void);                     /*!< Get Disk Status                           */
-//  DRESULT (*disk_read)       (BYTE*, DWORD, UINT);       /*!< Read Sector(s)                            */
-//  DRESULT (*disk_write)      (const BYTE*, DWORD, UINT); /*!< Write Sector(s) when _USE_WRITE = 0       */
-//  DRESULT (*disk_ioctl)      (BYTE, void*);              /*!< I/O control operation when _USE_IOCTL = 1 */
+// read functions prototypes
+uint8_t W25Qxxx_ReadByte(uint8_t *pBuffer, uint32_t Bytes_Address);
+uint8_t W25Qxxx_ReadBytes(uint8_t *pBuffer, uint32_t ReadAddr, uint32_t NumByteToRead);
+uint8_t W25Qxxx_ReadPage(uint8_t *pBuffer, uint32_t Page_Address,
+                  uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_PageSize);
+uint8_t W25Qxxx_ReadSector(uint8_t *pBuffer, uint32_t Sector_Address, 
+                uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_SectorSize);
+uint8_t W25Qxxx_ReadBlock(uint8_t *pBuffer, uint32_t Block_Address, 
+                  uint32_t OffsetInByte, uint32_t NumByteToRead_up_to_BlockSize);
 
-//}SPIFLASHDiskio_drvTypeDef;
-
-
-///* Externally declare spi-flash io driver structure variables *******************************************/
-//extern const SPIFLASHDiskio_drvTypeDef  SPI_Flash_Driver;
-
-///**
-//  * @brief  spi-flash status structure definition
-//  */
-//#define   FLASH_OK                        ((uint8_t)0x00)
-//#define   FLASH_ERROR                     ((uint8_t)0x01)
-
-///**
-//  * @brief  spi-flash transfer state definition
-//  */
-//#define   SD_TRANSFER_OK                ((uint8_t)0x00)
-//#define   SD_TRANSFER_BUSY              ((uint8_t)0x01)
-
-//#define SD_PRESENT               ((uint8_t)0x01)
-//#define SD_NOT_PRESENT           ((uint8_t)0x00)
-//#define SD_DATATIMEOUT           ((uint32_t)100000000)
-//#endif /* EN_SPI_FLASH_DISK_IO */
-///* -------------------------- END -------------------------- */
+// write functions prototypes
+uint8_t W25Qxxx_WriteByte(const uint8_t byte, uint32_t WriteAddr_inBytes);
+uint8_t W25Qxxx_WritePage(const uint8_t *pBuffer, uint32_t Page_Address,
+                uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_PageSize);
+uint8_t W25Qxxx_WriteSector(const uint8_t *pBuffer, uint32_t Sector_Address,
+                uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_SectorSize);
+uint8_t W25Qxxx_WriteBlock(const uint8_t *pBuffer, uint32_t Block_Address, 
+                uint32_t OffsetInByte, uint32_t NumByteToWrite_up_to_BlockSize);
 
 #ifdef __cplusplus
     }

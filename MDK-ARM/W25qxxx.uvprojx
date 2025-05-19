@@ -518,6 +518,26 @@
               <FileType>1</FileType>
               <FilePath>..\w25qxx\w25qxxx.c</FilePath>
             </File>
+            <File>
+              <FileName>w25qxxxUtils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\w25qxx\w25qxxxUtils.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxxxErrase.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\w25qxx\w25qxxxErrase.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxxxRd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\w25qxx\w25qxxxRd.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxxxWr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\w25qxx\w25qxxxWr.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
