@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -104,6 +105,7 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_USART1_UART_Init();
+//  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   w24qxxx_init_t init;
   
@@ -111,9 +113,12 @@ int main(void)
   init.CS_EnableDisable    = CS_EnableDisableCB;
   init.WP_EnableDisable    = WP_EnableDisable;
   W25Qxxx_Init(&init);
-  
+
   W25Qxxx_DeviceInit();
-  Test();
+//  Test();
+
+  MX_USB_DEVICE_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -151,7 +156,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLM = 4;
   RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();

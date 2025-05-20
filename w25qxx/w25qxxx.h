@@ -8,8 +8,6 @@
 
 
 
-
-
 #ifdef __cplusplus
     extern "C" {
 #endif
@@ -46,6 +44,9 @@ w24qxxx_statusTypeDef W25Qxxx_Init(w24qxxx_init_t * init);
 w24qxxx_statusTypeDef W25Qxxx_DeviceInit(void);
 void Test(void);
 
+int8_t W25Qxxx_GetCapacity(uint32_t *block_num, uint16_t *block_size);
+int8_t W25Qxxx_Read_FS(uint8_t *buf, uint32_t blk_addr, uint16_t blk_len);
+int8_t W25Qxxx_Write_FS(uint8_t *buf, uint32_t blk_addr, uint16_t blk_len);
 
 #ifdef __cplusplus
     }

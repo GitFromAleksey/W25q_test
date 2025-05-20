@@ -20,19 +20,7 @@ uint32_t  W25Qxxx_PageCount;
 uint32_t  W25Qxxx_BlockSize;
 uint32_t  W25Qxxx_CapacityInKiloByte;
 
-// ----------------------------------------------------------------------------
-/** ###########################################################################
-  * @brief  W25Qxxx module init function
-  * @retval return status
-  */
-w24qxxx_statusTypeDef W25Qxxx_Init(w24qxxx_init_t * init)
-{
-  memcpy(&INIT, init, sizeof(w24qxxx_init_t));
 
-  Is_W25Qxxx_Init = true;
-
-  return w24qxxx_OK;
-}
 // ----------------------------------------------------------------------------
 w24qxxx_statusTypeDef W25Qxxx_Reset(void)
 {
@@ -56,7 +44,6 @@ w24qxxx_statusTypeDef W25Qxxx_Power_Up(void)
 
   uint8_t ret;
 
-  W25Qxxx_Reset();
 
   W25Qxxx_CsEnable();
 
@@ -288,12 +275,12 @@ w24qxxx_statusTypeDef W25Qxxx_DeviceInit(void)
       return w24qxxx_ERROR;
   }
 
-  W25Qxxx_PageSize            = W25QXXX_PAGESIZE;    // 256  Byte
-  W25Qxxx_SectorSize          = W25QXXX_SECTORSIZE;  // 4096 Byte
-  W25Qxxx_SectorCount         = W25Qxxx_BlockCount * W25QXXX_SECTORS_IN_BLOCK;
-  W25Qxxx_PageCount           = (W25Qxxx_SectorCount * W25Qxxx_SectorSize) / W25Qxxx_PageSize;
-  W25Qxxx_BlockSize           = W25Qxxx_SectorSize * W25QXXX_SECTORS_IN_BLOCK;
-  W25Qxxx_CapacityInKiloByte  = (W25Qxxx_SectorCount * W25Qxxx_SectorSize) / 1024;
+  W25Qxxx_PageSize            = W25QXXX_PAGESIZE;    // 256  Byte 0x100
+  W25Qxxx_SectorSize          = W25QXXX_SECTORSIZE;  // 4096 Byte 0x100
+  W25Qxxx_SectorCount         = W25Qxxx_BlockCount * W25QXXX_SECTORS_IN_BLOCK; // 0x200
+  W25Qxxx_PageCount           = (W25Qxxx_SectorCount * W25Qxxx_SectorSize) / W25Qxxx_PageSize; // 0x2000
+  W25Qxxx_BlockSize           = W25Qxxx_SectorSize * W25QXXX_SECTORS_IN_BLOCK; // 0x10000
+  W25Qxxx_CapacityInKiloByte  = (W25Qxxx_SectorCount * W25Qxxx_SectorSize) / 1024; // 0x800
   W25Qxxx_Read_Unique_ID();
 
   printf("Device \"%s\" detected.\r\n", dev_type_desc);
@@ -311,10 +298,74 @@ w24qxxx_statusTypeDef W25Qxxx_DeviceInit(void)
 
   uint8_t regVal = W25Qxxx_Read_REG_x(W25Q512_STATUS_REG1);
 
+//  W25Qxxx_EraseChip();
+
   if ((regVal & SR1_S0_BUSY) == SR1_S0_BUSY)
     return w24qxxx_ERROR;
 
   return w24qxxx_OK;
+}
+// ----------------------------------------------------------------------------
+/** ###########################################################################
+  * @brief  W25Qxxx module init function
+  * @retval return status
+  */
+w24qxxx_statusTypeDef W25Qxxx_Init(w24qxxx_init_t * init)
+{
+  memcpy(&INIT, init, sizeof(w24qxxx_init_t));
+
+  Is_W25Qxxx_Init = true;
+
+  return (Is_W25Qxxx_Init)?(w24qxxx_OK):(w24qxxx_init_error);
+}
+// ----------------------------------------------------------------------------
+#define  DIV    2
+int8_t W25Qxxx_GetCapacity(uint32_t *block_num, uint16_t *block_size)
+{
+
+  *block_num  = W25Qxxx_PageCount/DIV; // W25Qxxx_BlockCount;
+  *block_size = W25Qxxx_PageSize*DIV; //W25Qxxx_BlockSize;
+
+  return 0;
+}
+// ----------------------------------------------------------------------------
+int8_t W25Qxxx_Read_FS(uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
+{
+// размер блока blk_len = W25Qxxx_PageSize*DIV = 256*2 = 512 байт
+
+// читаем первую страницу 256 байт
+  W25Qxxx_ReadPage(&buf[0], blk_addr*DIV, 0, W25QXXX_PAGESIZE);
+// читаем вторую страницу 256 байт
+  W25Qxxx_ReadPage(&buf[W25QXXX_PAGESIZE], blk_addr*DIV+1, 0, W25QXXX_PAGESIZE);
+  return 0;
+}
+// ----------------------------------------------------------------------------
+int8_t W25Qxxx_Write_FS(uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
+{
+  uint8_t buf_tmp[W25QXXX_SECTORSIZE];
+
+// вычислить в каком секторе сраница
+  uint32_t page   = blk_addr*DIV; // номер страницы с самого начала
+  uint32_t sector = page/W25QXXX_PAGES_IN_SECTOR; // сектор в котором эта страница
+  uint32_t page_in_sector = page - sector*W25QXXX_PAGES_IN_SECTOR; // номер страницы в этом секторе
+  uint32_t byte_in_sector = page_in_sector * W25QXXX_PAGESIZE; // номер байта в секторе
+  uint32_t byte_to_write = blk_len * W25Qxxx_PageSize*DIV; // blk_len * 512
+
+//  printf("W25WriteFS. blk_addr:%d, blk_len:%d; page:%d, sector:%d, page_in_sector:%d, byte_in_sector:%d\r\n",
+//                      blk_addr,    blk_len,    page,    sector,    page_in_sector,    byte_in_sector);
+// считываем весь сектор
+  W25Qxxx_ReadSector(buf_tmp, sector, 0, W25QXXX_SECTORSIZE);
+
+// переписываем байты в секторе
+  for(int i = byte_in_sector; i < (byte_in_sector + byte_to_write); ++i)
+    buf_tmp[i] = buf[i-byte_in_sector];
+
+  W25Qxxx_EraseSector(sector);
+
+// записываем сектор с изменёнными байтами
+  W25Qxxx_WriteSector(buf_tmp, sector, 0, W25QXXX_SECTORSIZE);
+
+  return 0;
 }
 // ----------------------------------------------------------------------------
 void Test(void)
