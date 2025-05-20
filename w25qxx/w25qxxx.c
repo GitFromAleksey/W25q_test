@@ -319,6 +319,8 @@ w24qxxx_statusTypeDef W25Qxxx_Init(w24qxxx_init_t * init)
   return (Is_W25Qxxx_Init)?(w24qxxx_OK):(w24qxxx_init_error);
 }
 // ----------------------------------------------------------------------------
+// USB Mass Storage interface functions
+// ----------------------------------------------------------------------------
 #define  DIV    2
 int8_t W25Qxxx_GetCapacity(uint32_t *block_num, uint16_t *block_size)
 {
