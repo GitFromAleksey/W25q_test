@@ -124,6 +124,25 @@ void CmdReadDir(const void *param)
         printf("Failed to open \"%s\". (%u)\r\n", path, res);
     }
 }
+
+
+char * file_name = "FatFsInterface.c";
+void CmdReadFile(const void *param)
+{
+  FRESULT res;
+
+  FIL fil;        /* File object */
+  char line[100]; /* Line buffer */
+
+  res = f_open(&fil, file_name, FA_READ);
+
+  while(f_gets(line, sizeof(line), &fil))
+  {
+    printf("%s", line);
+  }
+
+  f_close(&fil);
+}
 /* USER CODE END 0 */
 
 /**
@@ -168,10 +187,10 @@ int main(void)
   W25Qxxx_Init(&init);
 
   W25Qxxx_DeviceInit();
-//  Test();
+
   ConsoleCommandAdd("mnt",  CmdMount,       "Mount fs.");
-//  ConsoleCommandAdd("cap",  CmdGetCapacity, "Get disk capacity.");
   ConsoleCommandAdd("ls",   CmdReadDir,     "Read directory.");
+  ConsoleCommandAdd("rf",   CmdReadFile,    "Read file.");
 
   MX_USB_DEVICE_Init();
 
