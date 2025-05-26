@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../../w25qxx/w25qxxx.h"
+#include "../../console/console.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -72,10 +73,13 @@ w24qxxx_statusTypeDef WP_EnableDisable(bool enable);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 FRESULT fres;
 FATFS fs;
 FIL   fp;
 DIR   dp;
+
+
 
 void CmdMount(const void *param)
 {
@@ -110,7 +114,7 @@ void CmdReadDir(const void *param)
             }
             else
             {                               /* File */
-                printf("name: %s; size: %u\r\n", fno.fname, fno.fsize);
+                printf("name: %s;\tsize: %u bytes\r\n", fno.fname, fno.fsize);
                 nfile++;
             }
         }
@@ -165,8 +169,9 @@ int main(void)
 
   W25Qxxx_DeviceInit();
 //  Test();
-  CmdMount(NULL);
-  CmdReadDir(NULL);
+  ConsoleCommandAdd("mnt",  CmdMount,       "Mount fs.");
+//  ConsoleCommandAdd("cap",  CmdGetCapacity, "Get disk capacity.");
+  ConsoleCommandAdd("ls",   CmdReadDir,     "Read directory.");
 
   MX_USB_DEVICE_Init();
 
@@ -176,8 +181,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-  
+    HAL_Delay(10);
+    ConsoleRun();
 
     /* USER CODE END WHILE */
 

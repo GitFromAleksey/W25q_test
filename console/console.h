@@ -7,7 +7,7 @@
     extern "C" {
 #endif
 
-#define CNSL_MAX_CMDS_NUM    10u
+#define CNSL_MAX_CMDS_NUM    10u // максимальное кол-во консольных команд
 // указатель обработчика команды
 typedef void (*console_command_handler_t)(const void *);
 
@@ -31,7 +31,9 @@ void ConsoleCommandAdd( char * cmd_name,
                         const char * cmd_help);
 // ----------------------------------------------------------------------------
 void ConsoleCommandExecutor(const char * cmd_name, console_commands_t *commands);
-
+// ----------------------------------------------------------------------------
+void ConsoleRun(void);
+// ----------------------------------------------------------------------------
 
 #ifdef __cplusplus
     }
