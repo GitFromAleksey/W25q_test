@@ -125,54 +125,9 @@ void CmdReadDir(const void *param)
     }
 }
 
+
 char * sep = " ";
 char * file_name = "FatFsInterface.c";
-void CmdReadBinFile(const void *param)
-{
-  FRESULT res;
-
-  char * argv = (char *)param;
-  FIL fil;        /* File object */
-  char data[100]; /* Line buffer */
-  UINT read_bytes;
-
-  char * istr;
-  istr = strtok(argv, sep);
-  if(istr != NULL)
-  {
-
-    istr = strtok(NULL, sep);
-    if(istr == NULL)
-    {
-      printf("Enter file name please!!!\n");
-      return;
-    }
-  }
-
-  file_name = istr;
-
-  printf("Read from text file: %s\n", file_name);
-
-  res = f_open(&fil, file_name, FA_READ);
-
-
-// FRESULT f_read (FIL* fp, void* buff, UINT btr, UINT* br);			/* Read data from the file */
-
-//  while(f_gets(data, sizeof(data), &fil))
-  
-  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
-  {
-    if(read_bytes == 0)
-      break;
-    for(int i = 0; i < read_bytes; ++i)
-      printf("%X,", data[i]);
-  }
-
-  printf("\r\n");
-
-  f_close(&fil);
-}
-
 void CmdReadTextFile(const void *param)
 {
   FRESULT res;
@@ -204,6 +159,152 @@ void CmdReadTextFile(const void *param)
   {
     printf("%s", line);
   }
+
+  f_close(&fil);
+}
+
+void CmdReadBinFile(const void *param)
+{
+  FRESULT res;
+
+  char * argv = (char *)param;
+  FIL fil;        /* File object */
+  char data[100]; /* Line buffer */
+  UINT read_bytes;
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+
+  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+  {
+    if(read_bytes == 0)
+      break;
+    for(int i = 0; i < read_bytes; ++i)
+      printf("%X,", data[i]);
+  }
+
+  printf("\r\n");
+
+  f_close(&fil);
+}
+
+#pragma pack(push, 1)
+typedef struct
+{
+  DWORD biSize;         // Размер структуры.
+  LONG biWidth;         // Ширина изображения в пикселах
+  LONG biHeight;        // высота изображения в пикселах
+  WORD biPlanes;        // Количество плоскостей
+  WORD biBitCount;      // Глубина цвета в битах на пиксель
+  DWORD biCompression;  // Тип сжатия
+  DWORD biSizeImage;    // Размер изображения в байтах
+  LONG biXPelsPerMeter; // Горизонтальное разрешение
+  LONG biYPelsPerMeter; // вертикальное разрешение
+  DWORD biClrUsed;      // Количество используемых цветов кодовой таблицы
+  DWORD biClrImportant; // Количество основных цветов
+
+} BITMAP_INFO_HEADER_t; // структура информационного заголовка
+
+typedef struct
+{
+  WORD bfType;                // Тип файла. Должен быть "BM".
+  DWORD bfSize;               // Размер файла в байтах.
+  WORD bfReserved1;           // Зарезервированные поля.
+  WORD bfReserved2;           // Зарезервированные поля.
+  DWORD bfOffBits;            // Смещение битового массива относительно начала файла
+  BITMAP_INFO_HEADER_t info;  // структура информационного заголовка
+  uint8_t data;
+} BITMAP_FILE_HEADER_t;       // структура заголовка файла 
+#pragma pack(pop)
+
+
+
+void CmdReadBmpFile(const void *param)
+{
+  FRESULT res;
+  
+  BITMAP_FILE_HEADER_t *bmp_hdr;
+
+  char * argv = (char *)param;
+  FIL fil;        /* File object */
+  char data[100]; /* Line buffer */
+  uint8_t *p_bi_data;
+  UINT read_bytes;
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+
+  if(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+  {
+    bmp_hdr = (BITMAP_FILE_HEADER_t *)data;
+
+    printf("bfType: 0x%X\r\nbfSize: %u\r\nbfReserved1: 0x%X\r\n\
+bfReserved2: 0x%X\r\nbfOffBits: %u\r\n",
+            bmp_hdr->bfType,
+            bmp_hdr->bfSize,
+            bmp_hdr->bfReserved1,
+            bmp_hdr->bfReserved2,
+            bmp_hdr->bfOffBits);
+
+    printf("\r\nbiSize: %u\r\nbiWidth: %u\r\nbiHeight: %u\r\nbiPlanes: %u\r\n\
+biBitCount: %u\r\nbiCompression: %u\r\nbiSizeImage: %u\r\n,biXPelsPerMeter: \
+%u\r\nbiYPelsPerMeter: %u\r\nbiClrUsed: %u\r\nbiClrImportant: %u\r\n",
+            bmp_hdr->info.biSize,
+            bmp_hdr->info.biWidth,
+            bmp_hdr->info.biHeight,
+            bmp_hdr->info.biPlanes,
+            bmp_hdr->info.biBitCount,
+            bmp_hdr->info.biCompression,
+            bmp_hdr->info.biSizeImage,
+            bmp_hdr->info.biXPelsPerMeter,
+            bmp_hdr->info.biYPelsPerMeter,
+            bmp_hdr->info.biClrUsed,
+            bmp_hdr->info.biClrImportant
+            );
+
+    printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
+
+    p_bi_data = &bmp_hdr->data;
+
+    for(int i = bmp_hdr->bfOffBits; i < sizeof(data); ++i)
+    {
+      printf("%X(%X);", data[i], *(p_bi_data++));
+    }
+  }
+
+  printf("\r\n");
 
   f_close(&fil);
 }
@@ -256,6 +357,7 @@ int main(void)
   ConsoleCommandAdd("ls",   CmdReadDir,      "Read directory.");
   ConsoleCommandAdd("rft",  CmdReadTextFile, "Read text file.");
   ConsoleCommandAdd("rfb",  CmdReadBinFile,  "Read binary file.");
+  ConsoleCommandAdd("rbm",  CmdReadBmpFile,  "Read bmp file.");
 
   MX_USB_DEVICE_Init();
 
