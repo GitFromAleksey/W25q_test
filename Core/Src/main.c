@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "../../w25qxx/w25qxxx.h"
 #include "../../console/console.h"
+#include "../../ILI9341/ili9341.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +48,8 @@ SPI_HandleTypeDef hspi1;
 
 UART_HandleTypeDef huart1;
 
+SRAM_HandleTypeDef hsram1;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -56,6 +59,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_FSMC_Init(void);
 /* USER CODE BEGIN PFP */
 // ----------------------------------------------------------------------------
 int stdout_putchar(int ch);
@@ -229,7 +233,7 @@ typedef struct
   WORD bfReserved2;           // Зарезервированные поля.
   DWORD bfOffBits;            // Смещение битового массива относительно начала файла
   BITMAP_INFO_HEADER_t info;  // структура информационного заголовка
-  uint8_t data;
+//  uint8_t data;
 } BITMAP_FILE_HEADER_t;       // структура заголовка файла 
 #pragma pack(pop)
 
@@ -243,7 +247,7 @@ void CmdReadBmpFile(const void *param)
 
   char * argv = (char *)param;
   FIL fil;        /* File object */
-  char data[100]; /* Line buffer */
+  char data[sizeof(BITMAP_FILE_HEADER_t)]; /* Line buffer */
   uint8_t *p_bi_data;
   UINT read_bytes;
 
@@ -296,15 +300,45 @@ biBitCount: %u\r\nbiCompression: %u\r\nbiSizeImage: %u\r\n,biXPelsPerMeter: \
 
     printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
 
-    p_bi_data = &bmp_hdr->data;
+//    p_bi_data = &bmp_hdr->data;
 
-    for(int i = bmp_hdr->bfOffBits; i < sizeof(data); ++i)
-    {
-      printf("%X(%X);", data[i], *(p_bi_data++));
-    }
+
+//    lcdSetCursor(0, 0);
+//    for(int i = bmp_hdr->bfOffBits; i < sizeof(data); ++i)
+//    {
+//      f_read(&fil, data, 3, &read_bytes);
+//      lcdDrawPixel(0, i-bmp_hdr->bfOffBits, data[i]);
+//      printf("%X(%X);", data[i], *(p_bi_data++));
+//    }
   }
 
   printf("\r\n");
+
+  uint16_t pixel = 0;
+  lcdSetCursor(0, 0);
+  for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
+  {
+    for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
+    {
+    //void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
+
+      f_read(&fil, data, 3, &read_bytes);
+//      pixel  = (data[0] & 0x1F);      // COLOR_BLUE (uint16_t)(0x001F) // 0000 0000 0001 1111
+//      pixel |= (data[1] & 0x1F)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
+//      pixel |= (data[2] & 0x3F)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
+
+      pixel  = 0;
+
+      pixel |= data[0]>>3;      // COLOR_BLUE (uint16_t)(0x001F) // 0000 0000 0001 1111
+      pixel |= (data[1]>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
+      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
+
+//      pixel |= (data[0] & 0xF8);      // COLOR_BLUE (uint16_t)(0x001F) // 0000 0000 0001 1111
+//      pixel |= ((data[2] & 0xF8)>>3)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
+//      pixel |= ((data[1] & 0xFC)>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
+      lcdDrawPixel(y, x, pixel);
+    }
+  }
 
   f_close(&fil);
 }
@@ -343,6 +377,7 @@ int main(void)
   MX_USART1_UART_Init();
 //  MX_USB_DEVICE_Init();
   MX_FATFS_Init();
+  MX_FSMC_Init();
   /* USER CODE BEGIN 2 */
   w24qxxx_init_t init;
   
@@ -361,6 +396,28 @@ int main(void)
 
   MX_USB_DEVICE_Init();
 
+  lcdBacklightOn();
+  lcdInit();
+  lcdSetOrientation(LCD_ORIENTATION_LANDSCAPE);
+  
+//  lcdFillRGB(COLOR_BLACK);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_BLUE);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_RED);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_GREEN);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_CYAN);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_MAGENTA);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_YELLOW);
+//  HAL_Delay(500);
+//  lcdFillRGB(COLOR_WHITE);
+  HAL_Delay(500);
+  lcdTest();
+  CmdMount(NULL);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -508,12 +565,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LED2_Pin|LED3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(F_CS_GPIO_Port, F_CS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : LED2_Pin LED3_Pin */
   GPIO_InitStruct.Pin = LED2_Pin|LED3_Pin;
@@ -529,8 +591,68 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(F_CS_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : LCD_BL_Pin */
+  GPIO_InitStruct.Pin = LCD_BL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LCD_BL_GPIO_Port, &GPIO_InitStruct);
+
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/* FSMC initialization function */
+static void MX_FSMC_Init(void)
+{
+
+  /* USER CODE BEGIN FSMC_Init 0 */
+
+  /* USER CODE END FSMC_Init 0 */
+
+  FSMC_NORSRAM_TimingTypeDef Timing = {0};
+
+  /* USER CODE BEGIN FSMC_Init 1 */
+
+  /* USER CODE END FSMC_Init 1 */
+
+  /** Perform the SRAM1 memory initialization sequence
+  */
+  hsram1.Instance = FSMC_NORSRAM_DEVICE;
+  hsram1.Extended = FSMC_NORSRAM_EXTENDED_DEVICE;
+  /* hsram1.Init */
+  hsram1.Init.NSBank = FSMC_NORSRAM_BANK1;
+  hsram1.Init.DataAddressMux = FSMC_DATA_ADDRESS_MUX_DISABLE;
+  hsram1.Init.MemoryType = FSMC_MEMORY_TYPE_SRAM;
+  hsram1.Init.MemoryDataWidth = FSMC_NORSRAM_MEM_BUS_WIDTH_16;
+  hsram1.Init.BurstAccessMode = FSMC_BURST_ACCESS_MODE_DISABLE;
+  hsram1.Init.WaitSignalPolarity = FSMC_WAIT_SIGNAL_POLARITY_LOW;
+  hsram1.Init.WrapMode = FSMC_WRAP_MODE_DISABLE;
+  hsram1.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
+  hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
+  hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
+  hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
+  hsram1.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
+  hsram1.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;
+  hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
+  /* Timing */
+  Timing.AddressSetupTime = 1;
+  Timing.AddressHoldTime = 15;
+  Timing.DataSetupTime = 5;
+  Timing.BusTurnAroundDuration = 0;
+  Timing.CLKDivision = 16;
+  Timing.DataLatency = 17;
+  Timing.AccessMode = FSMC_ACCESS_MODE_A;
+  /* ExtTiming */
+
+  if (HAL_SRAM_Init(&hsram1, &Timing, NULL) != HAL_OK)
+  {
+    Error_Handler( );
+  }
+
+  /* USER CODE BEGIN FSMC_Init 2 */
+
+  /* USER CODE END FSMC_Init 2 */
 }
 
 /* USER CODE BEGIN 4 */
