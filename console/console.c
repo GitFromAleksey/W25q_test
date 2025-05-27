@@ -52,7 +52,7 @@ void ConsoleCommandExecutor(const char * cmd_name, console_commands_t *commands)
     res = strstr(cmd_name, commands->commands[i].cmd_name );
     if(res != NULL)
     {
-      commands->commands[i].handler(NULL);
+      commands->commands[i].handler(cmd_name);
       return;
     }
   }

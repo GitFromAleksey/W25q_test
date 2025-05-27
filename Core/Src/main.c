@@ -125,14 +125,78 @@ void CmdReadDir(const void *param)
     }
 }
 
-
+char * sep = " ";
 char * file_name = "FatFsInterface.c";
-void CmdReadFile(const void *param)
+void CmdReadBinFile(const void *param)
 {
   FRESULT res;
 
+  char * argv = (char *)param;
+  FIL fil;        /* File object */
+  char data[100]; /* Line buffer */
+  UINT read_bytes;
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+
+
+// FRESULT f_read (FIL* fp, void* buff, UINT btr, UINT* br);			/* Read data from the file */
+
+//  while(f_gets(data, sizeof(data), &fil))
+  
+  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+  {
+    if(read_bytes == 0)
+      break;
+    for(int i = 0; i < read_bytes; ++i)
+      printf("%X,", data[i]);
+  }
+
+  printf("\r\n");
+
+  f_close(&fil);
+}
+
+void CmdReadTextFile(const void *param)
+{
+  FRESULT res;
+
+  char * argv = (char *)param;
   FIL fil;        /* File object */
   char line[100]; /* Line buffer */
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
 
   res = f_open(&fil, file_name, FA_READ);
 
@@ -188,9 +252,10 @@ int main(void)
 
   W25Qxxx_DeviceInit();
 
-  ConsoleCommandAdd("mnt",  CmdMount,       "Mount fs.");
-  ConsoleCommandAdd("ls",   CmdReadDir,     "Read directory.");
-  ConsoleCommandAdd("rf",   CmdReadFile,    "Read file.");
+  ConsoleCommandAdd("mnt",  CmdMount,        "Mount fs.");
+  ConsoleCommandAdd("ls",   CmdReadDir,      "Read directory.");
+  ConsoleCommandAdd("rft",  CmdReadTextFile, "Read text file.");
+  ConsoleCommandAdd("rfb",  CmdReadBinFile,  "Read binary file.");
 
   MX_USB_DEVICE_Init();
 
