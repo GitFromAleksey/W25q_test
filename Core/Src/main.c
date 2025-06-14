@@ -118,7 +118,7 @@ void CmdReadDir(const void *param)
             }
             else
             {                               /* File */
-                printf("name: %s;\tsize: %u bytes\r\n", fno.fname, fno.fsize);
+                printf("name: %s;\tsize: %lu bytes\r\n", fno.fname, fno.fsize);
                 nfile++;
             }
         }
@@ -274,17 +274,17 @@ void CmdReadBmpFile(const void *param)
   {
     bmp_hdr = (BITMAP_FILE_HEADER_t *)data;
 
-    printf("bfType: 0x%X\r\nbfSize: %u\r\nbfReserved1: 0x%X\r\n\
-bfReserved2: 0x%X\r\nbfOffBits: %u\r\n",
+    printf("bfType: 0x%X\r\nbfSize: %lu\r\nbfReserved1: 0x%X\r\n\
+bfReserved2: 0x%X\r\nbfOffBits: %lu\r\n",
             bmp_hdr->bfType,
             bmp_hdr->bfSize,
             bmp_hdr->bfReserved1,
             bmp_hdr->bfReserved2,
             bmp_hdr->bfOffBits);
 
-    printf("\r\nbiSize: %u\r\nbiWidth: %u\r\nbiHeight: %u\r\nbiPlanes: %u\r\n\
-biBitCount: %u\r\nbiCompression: %u\r\nbiSizeImage: %u\r\n,biXPelsPerMeter: \
-%u\r\nbiYPelsPerMeter: %u\r\nbiClrUsed: %u\r\nbiClrImportant: %u\r\n",
+    printf("\r\nbiSize: %lu\r\nbiWidth: %lu\r\nbiHeight: %lu\r\nbiPlanes: %u\r\n\
+biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
+%lu\r\nbiYPelsPerMeter: %lu\r\nbiClrUsed: %lu\r\nbiClrImportant: %lu\r\n",
             bmp_hdr->info.biSize,
             bmp_hdr->info.biWidth,
             bmp_hdr->info.biHeight,
@@ -315,6 +315,7 @@ biBitCount: %u\r\nbiCompression: %u\r\nbiSizeImage: %u\r\n,biXPelsPerMeter: \
   printf("\r\n");
 
   uint16_t pixel = 0;
+  int padding = (4 - (bmp_hdr->info.biWidth*3 % 4)) % 4;
   lcdSetCursor(0, 0);
   for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
   {
@@ -337,6 +338,11 @@ biBitCount: %u\r\nbiCompression: %u\r\nbiSizeImage: %u\r\n,biXPelsPerMeter: \
 //      pixel |= ((data[2] & 0xF8)>>3)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
 //      pixel |= ((data[1] & 0xFC)>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
       lcdDrawPixel(y, x, pixel);
+    }
+    // пропуск выравивающих (до 4-х) байт
+    for(int x = 0; x < padding; ++x)
+    {
+      f_read(&fil, data, 1, &read_bytes);
     }
   }
 
