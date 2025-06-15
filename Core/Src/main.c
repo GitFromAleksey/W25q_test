@@ -348,6 +348,66 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
 
   f_close(&fil);
 }
+// ----------------------------------------------------------------------------
+void CmdSettingsFile(const void *param)
+{
+  FRESULT res;
+  FIL fil;        /* File object */
+  FSIZE_t file_size = 0;
+  UINT read_bytes;
+
+  const char * file_name = "settings.json";
+
+  printf("Read from text file: %s\n", file_name);
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+  if(res != FR_OK)
+  {
+    printf("Error open file: %s\n", file_name);
+    return;
+  }
+  
+  file_size = f_size(&fil);
+  printf("File size: %lu\n", file_size );
+
+  char *json_data = malloc(file_size);
+  if(json_data == NULL)
+  {
+    printf("malloc error\n");
+    return;
+  }
+  
+  res = f_read(&fil, json_data, file_size, &read_bytes);
+  if(res == FR_OK)
+    printf("Read OK! Read bytes: %u\n", read_bytes);
+  else
+  {
+    printf("Read ERROR!%u\n", res);
+    free(json_data);
+    f_close(&fil);
+    return;
+  }
+  
+  for(int i = 0; i < read_bytes; ++i)
+  {
+    printf("%c", json_data[i]);
+  }
+//  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+//  {
+//    if(read_bytes == 0)
+//      break;
+//    for(int i = 0; i < read_bytes; ++i)
+//      printf("%X,", data[i]);
+//  }
+
+//  printf("\r\n");
+
+  free(json_data);
+  f_close(&fil);
+}
+// ----------------------------------------------------------------------------
 /* USER CODE END 0 */
 
 /**
@@ -399,6 +459,7 @@ int main(void)
   ConsoleCommandAdd("rft",  CmdReadTextFile, "Read text file.");
   ConsoleCommandAdd("rfb",  CmdReadBinFile,  "Read binary file.");
   ConsoleCommandAdd("rbm",  CmdReadBmpFile,  "Read bmp file.");
+  ConsoleCommandAdd("stp",  CmdSettingsFile, "Read settings file.");
 
   MX_USB_DEVICE_Init();
 
@@ -424,6 +485,7 @@ int main(void)
   HAL_Delay(500);
   lcdTest();
   CmdMount(NULL);
+  CmdSettingsFile(NULL);
   /* USER CODE END 2 */
 
   /* Infinite loop */

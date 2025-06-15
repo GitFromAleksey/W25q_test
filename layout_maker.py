@@ -25,7 +25,7 @@ IMAGE_FILE      = 'ImageFile'
 
 FRAME_PRIMITIVES = 'FramePrimitives'
 
-SETTINGS_FILE = HMI_SETTINGS + '.json'
+SETTINGS_FILE = 'settings.json'
 
 class MbRegType(Enum):
     DI      = 0
