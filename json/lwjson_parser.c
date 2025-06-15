@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "lwjson_parser.h"
-#include "../lwjson/include/lwjson.h"
+#include "lwjson\include\lwjson.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -340,7 +340,7 @@ static primitive_t * CreateNewFrame(const lwjson_token_t* frame_tkn)
         if(primitive == NULL)
           continue;
 
-        PrimitiveToListAppend(&new_frame->OwnPrimitivesList, primitive);
+        PrimitiveToListAppend((primitive_t **)&new_frame->OwnPrimitivesList, primitive);
       }
     }
   }

@@ -2323,6 +2323,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>json</GroupName>
+          <Files>
+            <File>
+              <FileName>lwjson_parser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\json\lwjson_parser.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
