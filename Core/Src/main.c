@@ -26,6 +26,7 @@
 #include "../../w25qxx/w25qxxx.h"
 #include "../../console/console.h"
 #include "../../ILI9341/ili9341.h"
+#include "../../json/lwjson_parser.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -349,6 +350,7 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
   f_close(&fil);
 }
 // ----------------------------------------------------------------------------
+hmi_settings_t HmiSettings;
 void CmdSettingsFile(const void *param)
 {
   FRESULT res;
@@ -368,7 +370,7 @@ void CmdSettingsFile(const void *param)
     printf("Error open file: %s\n", file_name);
     return;
   }
-  
+
   file_size = f_size(&fil);
   printf("File size: %lu\n", file_size );
 
@@ -378,7 +380,7 @@ void CmdSettingsFile(const void *param)
     printf("malloc error\n");
     return;
   }
-  
+
   res = f_read(&fil, json_data, file_size, &read_bytes);
   if(res == FR_OK)
     printf("Read OK! Read bytes: %u\n", read_bytes);
@@ -389,20 +391,13 @@ void CmdSettingsFile(const void *param)
     f_close(&fil);
     return;
   }
-  
-  for(int i = 0; i < read_bytes; ++i)
-  {
-    printf("%c", json_data[i]);
-  }
-//  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
-//  {
-//    if(read_bytes == 0)
-//      break;
-//    for(int i = 0; i < read_bytes; ++i)
-//      printf("%X,", data[i]);
-//  }
 
-//  printf("\r\n");
+  LwjsonParse(&HmiSettings, json_data);
+
+//  for(int i = 0; i < read_bytes; ++i)
+//  {
+//    printf("%c", json_data[i]);
+//  }
 
   free(json_data);
   f_close(&fil);
