@@ -27,6 +27,7 @@
 #include "../../console/console.h"
 #include "../../ILI9341/ili9341.h"
 #include "../../json/lwjson_parser.h"
+#include "../../graphics/graphics.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -554,34 +555,34 @@ void CmdReadBinFile(const void *param)
   f_close(&fil);
 }
 // ----------------------------------------------------------------------------
-#pragma pack(push, 1)
-typedef struct
-{
-  DWORD biSize;         // Размер структуры.
-  LONG biWidth;         // Ширина изображения в пикселах
-  LONG biHeight;        // высота изображения в пикселах
-  WORD biPlanes;        // Количество плоскостей
-  WORD biBitCount;      // Глубина цвета в битах на пиксель
-  DWORD biCompression;  // Тип сжатия
-  DWORD biSizeImage;    // Размер изображения в байтах
-  LONG biXPelsPerMeter; // Горизонтальное разрешение
-  LONG biYPelsPerMeter; // вертикальное разрешение
-  DWORD biClrUsed;      // Количество используемых цветов кодовой таблицы
-  DWORD biClrImportant; // Количество основных цветов
+//#pragma pack(push, 1)
+//typedef struct
+//{
+//  DWORD biSize;         // Размер структуры.
+//  LONG biWidth;         // Ширина изображения в пикселах
+//  LONG biHeight;        // высота изображения в пикселах
+//  WORD biPlanes;        // Количество плоскостей
+//  WORD biBitCount;      // Глубина цвета в битах на пиксель
+//  DWORD biCompression;  // Тип сжатия
+//  DWORD biSizeImage;    // Размер изображения в байтах
+//  LONG biXPelsPerMeter; // Горизонтальное разрешение
+//  LONG biYPelsPerMeter; // вертикальное разрешение
+//  DWORD biClrUsed;      // Количество используемых цветов кодовой таблицы
+//  DWORD biClrImportant; // Количество основных цветов
 
-} BITMAP_INFO_HEADER_t; // структура информационного заголовка
+//} BITMAP_INFO_HEADER_t; // структура информационного заголовка
 
-typedef struct
-{
-  WORD bfType;                // Тип файла. Должен быть "BM".
-  DWORD bfSize;               // Размер файла в байтах.
-  WORD bfReserved1;           // Зарезервированные поля.
-  WORD bfReserved2;           // Зарезервированные поля.
-  DWORD bfOffBits;            // Смещение битового массива относительно начала файла
-  BITMAP_INFO_HEADER_t info;  // структура информационного заголовка
-//  uint8_t data;
-} BITMAP_FILE_HEADER_t;       // структура заголовка файла 
-#pragma pack(pop)
+//typedef struct
+//{
+//  WORD bfType;                // Тип файла. Должен быть "BM".
+//  DWORD bfSize;               // Размер файла в байтах.
+//  WORD bfReserved1;           // Зарезервированные поля.
+//  WORD bfReserved2;           // Зарезервированные поля.
+//  DWORD bfOffBits;            // Смещение битового массива относительно начала файла
+//  BITMAP_INFO_HEADER_t info;  // структура информационного заголовка
+////  uint8_t data;
+//} BITMAP_FILE_HEADER_t;       // структура заголовка файла 
+//#pragma pack(pop)
 // ----------------------------------------------------------------------------
 void CmdReadBmpFile(const void *param)
 {

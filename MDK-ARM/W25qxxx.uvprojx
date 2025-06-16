@@ -2338,6 +2338,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>graphics</GroupName>
+          <Files>
+            <File>
+              <FileName>graphics.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\graphics\graphics.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
