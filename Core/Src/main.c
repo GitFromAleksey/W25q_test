@@ -52,11 +52,7 @@ UART_HandleTypeDef huart1;
 SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
-FRESULT fres;
 FATFS fs;
-FIL   fp;
-DIR   dp;
-
 hmi_settings_t HmiSettings;
 /* USER CODE END PV */
 
@@ -83,295 +79,18 @@ w24qxxx_statusTypeDef WP_EnableDisable(bool enable);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void CmdMount(const void *param)
-{
-  fres = f_mount(&fs, "0:", 1);
-  if (fres == FR_OK)
-    printf("Mount res: %d = FR_OK", fres);
-  else
-    printf("Mount error res: %d", fres);
-}
+void CmdMount(const void *param);
 // ----------------------------------------------------------------------------
-void CmdReadDir(const void *param)
-{
-    FRESULT res;
-    DIR dir;
-    FILINFO fno;
-    int nfile, ndir;
-    const TCHAR* path = "0:";
-
-    res = f_opendir(&dir, path);                       /* Open the directory */
-    if (res == FR_OK)
-    {
-        nfile = ndir = 0;
-        for (;;)
-        {
-            res = f_readdir(&dir, &fno);                   /* Read a directory item */
-            if (res != FR_OK || fno.fname[0] == 0)
-              break;  /* Error or end of dir */
-            if (fno.fattrib & AM_DIR)
-            {            /* Directory */
-                printf("   <DIR>   %s\r\n", fno.fname);
-                ndir++;
-            }
-            else
-            {                               /* File */
-                printf("name: %s;\tsize: %lu bytes\r\n", fno.fname, fno.fsize);
-                nfile++;
-            }
-        }
-        f_closedir(&dir);
-        printf("%d dirs, %d files.\r\n", ndir, nfile);
-    } else {
-        printf("Failed to open \"%s\". (%u)\r\n", path, res);
-    }
-}
+void CmdReadDir(const void *param);
 // ----------------------------------------------------------------------------
 char * sep = " ";
-char * file_name = "FatFsInterface.c";
-void CmdReadTextFile(const void *param)
-{
-  FRESULT res;
-
-  char * argv = (char *)param;
-  FIL fil;        /* File object */
-  char line[100]; /* Line buffer */
-
-  char * istr;
-  istr = strtok(argv, sep);
-  if(istr != NULL)
-  {
-
-    istr = strtok(NULL, sep);
-    if(istr == NULL)
-    {
-      printf("Enter file name please!!!\n");
-      return;
-    }
-  }
-
-  file_name = istr;
-
-  printf("Read from text file: %s\n", file_name);
-
-  res = f_open(&fil, file_name, FA_READ);
-
-  while(f_gets(line, sizeof(line), &fil))
-  {
-    printf("%s", line);
-  }
-
-  f_close(&fil);
-}
+void CmdReadTextFile(const void *param);
 // ----------------------------------------------------------------------------
-void CmdReadBinFile(const void *param)
-{
-  FRESULT res;
-
-  char * argv = (char *)param;
-  FIL fil;        /* File object */
-  char data[100]; /* Line buffer */
-  UINT read_bytes;
-
-  char * istr;
-  istr = strtok(argv, sep);
-  if(istr != NULL)
-  {
-
-    istr = strtok(NULL, sep);
-    if(istr == NULL)
-    {
-      printf("Enter file name please!!!\n");
-      return;
-    }
-  }
-
-  file_name = istr;
-
-  printf("Read from text file: %s\n", file_name);
-
-  res = f_open(&fil, file_name, FA_READ);
-
-  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
-  {
-    if(read_bytes == 0)
-      break;
-    for(int i = 0; i < read_bytes; ++i)
-      printf("%X,", data[i]);
-  }
-
-  printf("\r\n");
-
-  f_close(&fil);
-}
+void CmdReadBinFile(const void *param);
 // ----------------------------------------------------------------------------
-#pragma pack(push, 1)
-typedef struct
-{
-  DWORD biSize;         // Размер структуры.
-  LONG biWidth;         // Ширина изображения в пикселах
-  LONG biHeight;        // высота изображения в пикселах
-  WORD biPlanes;        // Количество плоскостей
-  WORD biBitCount;      // Глубина цвета в битах на пиксель
-  DWORD biCompression;  // Тип сжатия
-  DWORD biSizeImage;    // Размер изображения в байтах
-  LONG biXPelsPerMeter; // Горизонтальное разрешение
-  LONG biYPelsPerMeter; // вертикальное разрешение
-  DWORD biClrUsed;      // Количество используемых цветов кодовой таблицы
-  DWORD biClrImportant; // Количество основных цветов
-
-} BITMAP_INFO_HEADER_t; // структура информационного заголовка
-
-typedef struct
-{
-  WORD bfType;                // Тип файла. Должен быть "BM".
-  DWORD bfSize;               // Размер файла в байтах.
-  WORD bfReserved1;           // Зарезервированные поля.
-  WORD bfReserved2;           // Зарезервированные поля.
-  DWORD bfOffBits;            // Смещение битового массива относительно начала файла
-  BITMAP_INFO_HEADER_t info;  // структура информационного заголовка
-//  uint8_t data;
-} BITMAP_FILE_HEADER_t;       // структура заголовка файла 
-#pragma pack(pop)
+void CmdReadBmpFile(const void *param);
 // ----------------------------------------------------------------------------
-void CmdReadBmpFile(const void *param)
-{
-  FRESULT res;
-  
-  BITMAP_FILE_HEADER_t *bmp_hdr;
-
-  char * argv = (char *)param;
-  FIL fil;        /* File object */
-  char data[sizeof(BITMAP_FILE_HEADER_t)]; /* Line buffer */
-  uint8_t *p_bi_data;
-  UINT read_bytes;
-
-  char * istr;
-  istr = strtok(argv, sep);
-  if(istr != NULL)
-  {
-
-    istr = strtok(NULL, sep);
-    if(istr == NULL)
-    {
-      printf("Enter file name please!!!\n");
-      return;
-    }
-  }
-
-  file_name = istr;
-
-  printf("Read from text file: %s\n", file_name);
-
-  res = f_open(&fil, file_name, FA_READ);
-
-  if(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
-  {
-    bmp_hdr = (BITMAP_FILE_HEADER_t *)data;
-
-    printf("bfType: 0x%X\r\nbfSize: %lu\r\nbfReserved1: 0x%X\r\n\
-bfReserved2: 0x%X\r\nbfOffBits: %lu\r\n",
-            bmp_hdr->bfType,
-            bmp_hdr->bfSize,
-            bmp_hdr->bfReserved1,
-            bmp_hdr->bfReserved2,
-            bmp_hdr->bfOffBits);
-
-    printf("\r\nbiSize: %lu\r\nbiWidth: %lu\r\nbiHeight: %lu\r\nbiPlanes: %u\r\n\
-biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
-%lu\r\nbiYPelsPerMeter: %lu\r\nbiClrUsed: %lu\r\nbiClrImportant: %lu\r\n",
-            bmp_hdr->info.biSize,
-            bmp_hdr->info.biWidth,
-            bmp_hdr->info.biHeight,
-            bmp_hdr->info.biPlanes,
-            bmp_hdr->info.biBitCount,
-            bmp_hdr->info.biCompression,
-            bmp_hdr->info.biSizeImage,
-            bmp_hdr->info.biXPelsPerMeter,
-            bmp_hdr->info.biYPelsPerMeter,
-            bmp_hdr->info.biClrUsed,
-            bmp_hdr->info.biClrImportant
-            );
-
-    printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
-  }
-
-  printf("\r\n");
-
-  uint16_t pixel = 0;
-  int padding = (4 - (bmp_hdr->info.biWidth*3 % 4)) % 4;
-  lcdSetCursor(0, 0);
-  for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
-  {
-    for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
-    {
-      f_read(&fil, data, 3, &read_bytes);
-
-      pixel  = 0;
-      pixel |= data[0]>>3;        // COLOR_BLUE (uint16_t)(0x001F)  // 0000 0000 0001 1111
-      pixel |= (data[1]>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
-      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800)   // 1111 1000 0000 0000
-
-      lcdDrawPixel(y, x, pixel);
-    }
-    // пропуск выравивающих (до 4-х) байт
-    f_read(&fil, data, padding, &read_bytes);
-  }
-
-  f_close(&fil);
-}
-// ----------------------------------------------------------------------------
-void CmdSettingsFile(const void *param)
-{
-  FRESULT res;
-  FIL fil;        /* File object */
-  FSIZE_t file_size = 0;
-  UINT read_bytes;
-
-  const char * file_name = "settings.json";
-
-  printf("Read from text file: %s\n", file_name);
-
-  printf("Read from text file: %s\n", file_name);
-
-  res = f_open(&fil, file_name, FA_READ);
-  if(res != FR_OK)
-  {
-    printf("Error open file: %s\n", file_name);
-    return;
-  }
-
-  file_size = f_size(&fil);
-  printf("File size: %lu\n", file_size );
-
-  char *json_data = malloc(file_size);
-  if(json_data == NULL)
-  {
-    printf("malloc error\n");
-    return;
-  }
-
-  res = f_read(&fil, json_data, file_size, &read_bytes);
-  if(res == FR_OK)
-    printf("Read OK! Read bytes: %u\n", read_bytes);
-  else
-  {
-    printf("Read ERROR!%u\n", res);
-    free(json_data);
-    f_close(&fil);
-    return;
-  }
-
-  LwjsonParse(&HmiSettings, json_data);
-
-//  for(int i = 0; i < read_bytes; ++i)
-//  {
-//    printf("%c", json_data[i]);
-//  }
-
-  free(json_data);
-  f_close(&fil);
-}
+void CmdSettingsFile(const void *param);
 // ----------------------------------------------------------------------------
 /* USER CODE END 0 */
 
@@ -719,6 +438,298 @@ int stdin_getchar(void)
   else
     return '\n';
 
+}
+// ----------------------------------------------------------------------------
+void CmdMount(const void *param)
+{
+  FRESULT fres;
+
+  fres = f_mount(&fs, "0:", 1);
+
+  if (fres == FR_OK)
+    printf("Mount res: %d = FR_OK", fres);
+  else
+    printf("Mount error res: %d", fres);
+}
+// ----------------------------------------------------------------------------
+void CmdReadDir(const void *param)
+{
+    FRESULT res;
+    DIR dir;
+    FILINFO fno;
+    int nfile, ndir;
+    const TCHAR* path = "0:";
+
+    res = f_opendir(&dir, path);                       /* Open the directory */
+    if (res == FR_OK)
+    {
+        nfile = ndir = 0;
+        for (;;)
+        {
+            res = f_readdir(&dir, &fno);                   /* Read a directory item */
+            if (res != FR_OK || fno.fname[0] == 0)
+              break;  /* Error or end of dir */
+            if (fno.fattrib & AM_DIR)
+            {            /* Directory */
+                printf("   <DIR>   %s\r\n", fno.fname);
+                ndir++;
+            }
+            else
+            {                               /* File */
+                printf("name: %s;\tsize: %lu bytes\r\n", fno.fname, fno.fsize);
+                nfile++;
+            }
+        }
+        f_closedir(&dir);
+        printf("%d dirs, %d files.\r\n", ndir, nfile);
+    } else {
+        printf("Failed to open \"%s\". (%u)\r\n", path, res);
+    }
+}
+// ----------------------------------------------------------------------------
+void CmdReadTextFile(const void *param)
+{
+  FRESULT res;
+  const char * file_name;
+
+  char * argv = (char *)param;
+  FIL fil;        /* File object */
+  char line[100]; /* Line buffer */
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+
+  while(f_gets(line, sizeof(line), &fil))
+  {
+    printf("%s", line);
+  }
+
+  f_close(&fil);
+}
+// ----------------------------------------------------------------------------
+void CmdReadBinFile(const void *param)
+{
+  FRESULT res;
+  const char * file_name;
+  char * argv = (char *)param;
+  FIL fil;        /* File object */
+  char data[100]; /* Line buffer */
+  UINT read_bytes;
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+
+  while(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+  {
+    if(read_bytes == 0)
+      break;
+    for(int i = 0; i < read_bytes; ++i)
+      printf("%X,", data[i]);
+  }
+
+  printf("\r\n");
+
+  f_close(&fil);
+}
+// ----------------------------------------------------------------------------
+#pragma pack(push, 1)
+typedef struct
+{
+  DWORD biSize;         // Размер структуры.
+  LONG biWidth;         // Ширина изображения в пикселах
+  LONG biHeight;        // высота изображения в пикселах
+  WORD biPlanes;        // Количество плоскостей
+  WORD biBitCount;      // Глубина цвета в битах на пиксель
+  DWORD biCompression;  // Тип сжатия
+  DWORD biSizeImage;    // Размер изображения в байтах
+  LONG biXPelsPerMeter; // Горизонтальное разрешение
+  LONG biYPelsPerMeter; // вертикальное разрешение
+  DWORD biClrUsed;      // Количество используемых цветов кодовой таблицы
+  DWORD biClrImportant; // Количество основных цветов
+
+} BITMAP_INFO_HEADER_t; // структура информационного заголовка
+
+typedef struct
+{
+  WORD bfType;                // Тип файла. Должен быть "BM".
+  DWORD bfSize;               // Размер файла в байтах.
+  WORD bfReserved1;           // Зарезервированные поля.
+  WORD bfReserved2;           // Зарезервированные поля.
+  DWORD bfOffBits;            // Смещение битового массива относительно начала файла
+  BITMAP_INFO_HEADER_t info;  // структура информационного заголовка
+//  uint8_t data;
+} BITMAP_FILE_HEADER_t;       // структура заголовка файла 
+#pragma pack(pop)
+// ----------------------------------------------------------------------------
+void CmdReadBmpFile(const void *param)
+{
+  FRESULT res;
+  const char * file_name;
+  BITMAP_FILE_HEADER_t *bmp_hdr;
+
+  char * argv = (char *)param;
+  FIL fil;        /* File object */
+  char data[sizeof(BITMAP_FILE_HEADER_t)]; /* Line buffer */
+  uint8_t *p_bi_data;
+  UINT read_bytes;
+
+  char * istr;
+  istr = strtok(argv, sep);
+  if(istr != NULL)
+  {
+
+    istr = strtok(NULL, sep);
+    if(istr == NULL)
+    {
+      printf("Enter file name please!!!\n");
+      return;
+    }
+  }
+
+  file_name = istr;
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+
+  if(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+  {
+    bmp_hdr = (BITMAP_FILE_HEADER_t *)data;
+
+    printf("bfType: 0x%X\r\nbfSize: %lu\r\nbfReserved1: 0x%X\r\n\
+bfReserved2: 0x%X\r\nbfOffBits: %lu\r\n",
+            bmp_hdr->bfType,
+            bmp_hdr->bfSize,
+            bmp_hdr->bfReserved1,
+            bmp_hdr->bfReserved2,
+            bmp_hdr->bfOffBits);
+
+    printf("\r\nbiSize: %lu\r\nbiWidth: %lu\r\nbiHeight: %lu\r\nbiPlanes: %u\r\n\
+biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
+%lu\r\nbiYPelsPerMeter: %lu\r\nbiClrUsed: %lu\r\nbiClrImportant: %lu\r\n",
+            bmp_hdr->info.biSize,
+            bmp_hdr->info.biWidth,
+            bmp_hdr->info.biHeight,
+            bmp_hdr->info.biPlanes,
+            bmp_hdr->info.biBitCount,
+            bmp_hdr->info.biCompression,
+            bmp_hdr->info.biSizeImage,
+            bmp_hdr->info.biXPelsPerMeter,
+            bmp_hdr->info.biYPelsPerMeter,
+            bmp_hdr->info.biClrUsed,
+            bmp_hdr->info.biClrImportant
+            );
+
+    printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
+  }
+
+  printf("\r\n");
+
+  uint16_t pixel = 0;
+  int padding = (4 - (bmp_hdr->info.biWidth*3 % 4)) % 4;
+  lcdSetCursor(0, 0);
+  for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
+  {
+    for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
+    {
+      f_read(&fil, data, 3, &read_bytes);
+
+      pixel  = 0;
+      pixel |= data[0]>>3;        // COLOR_BLUE (uint16_t)(0x001F)  // 0000 0000 0001 1111
+      pixel |= (data[1]>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
+      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800)   // 1111 1000 0000 0000
+
+      lcdDrawPixel(y, x, pixel);
+    }
+    // пропуск выравивающих (до 4-х) байт
+    f_read(&fil, data, padding, &read_bytes);
+  }
+
+  f_close(&fil);
+}
+// ----------------------------------------------------------------------------
+void CmdSettingsFile(const void *param)
+{
+  FRESULT res;
+  FIL fil;        /* File object */
+  FSIZE_t file_size = 0;
+  UINT read_bytes;
+
+  const char * file_name = "settings.json";
+
+  printf("Read from text file: %s\n", file_name);
+
+  printf("Read from text file: %s\n", file_name);
+
+  res = f_open(&fil, file_name, FA_READ);
+  if(res != FR_OK)
+  {
+    printf("Error open file: %s\n", file_name);
+    return;
+  }
+
+  file_size = f_size(&fil);
+  printf("File size: %lu\n", file_size );
+
+  char *json_data = malloc(file_size);
+  if(json_data == NULL)
+  {
+    printf("malloc error\n");
+    return;
+  }
+
+  res = f_read(&fil, json_data, file_size, &read_bytes);
+  if(res == FR_OK)
+    printf("Read OK! Read bytes: %u\n", read_bytes);
+  else
+  {
+    printf("Read ERROR!%u\n", res);
+    free(json_data);
+    f_close(&fil);
+    return;
+  }
+
+  LwjsonParse(&HmiSettings, json_data);
+
+//  for(int i = 0; i < read_bytes; ++i)
+//  {
+//    printf("%c", json_data[i]);
+//  }
+
+  free(json_data);
+  f_close(&fil);
 }
 // ----------------------------------------------------------------------------
 /* USER CODE END 4 */
