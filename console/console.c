@@ -8,6 +8,27 @@ static uint8_t rxbuf[20];
 // массив команд
 static console_commands_t ConsoleCommands = {0};
 
+// ----------------------------------------------------------------------------
+const char * ConsoleGetParam(const void *param)
+{
+  char * argv = (char *)param;
+  const char * istr;
+
+  istr = strtok(argv, SEPARATOR);
+
+  if(istr != NULL)
+  {
+    istr = strtok(NULL, SEPARATOR);
+    if(istr == NULL)
+    {
+      return NULL;
+    }
+    return istr;
+  }
+
+  return NULL;
+}
+// ----------------------------------------------------------------------------
 void CmdHelp(const void *param)
 {
   printf("\r\n<<< ------ HELP ------ >>>\r\n");
@@ -17,6 +38,7 @@ void CmdHelp(const void *param)
     printf("desc: %s\r\n", ConsoleCommands.commands[i].cmd_help);
   }
 }
+// ----------------------------------------------------------------------------
 // добавлятель новых команд
 void ConsoleCommandAdd( char * cmd_name, 
                         console_command_handler_t handler,

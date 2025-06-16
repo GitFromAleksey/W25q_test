@@ -83,7 +83,6 @@ void CmdMount(const void *param);
 // ----------------------------------------------------------------------------
 void CmdReadDir(const void *param);
 // ----------------------------------------------------------------------------
-char * sep = " ";
 void CmdReadTextFile(const void *param);
 // ----------------------------------------------------------------------------
 void CmdReadBinFile(const void *param);
@@ -497,11 +496,11 @@ void CmdReadTextFile(const void *param)
   char line[100]; /* Line buffer */
 
   char * istr;
-  istr = strtok(argv, sep);
+  istr = strtok(argv, SEPARATOR);
   if(istr != NULL)
   {
 
-    istr = strtok(NULL, sep);
+    istr = strtok(NULL, SEPARATOR);
     if(istr == NULL)
     {
       printf("Enter file name please!!!\n");
@@ -527,25 +526,13 @@ void CmdReadBinFile(const void *param)
 {
   FRESULT res;
   const char * file_name;
-  char * argv = (char *)param;
   FIL fil;        /* File object */
   char data[100]; /* Line buffer */
   UINT read_bytes;
 
-  char * istr;
-  istr = strtok(argv, sep);
-  if(istr != NULL)
-  {
-
-    istr = strtok(NULL, sep);
-    if(istr == NULL)
-    {
-      printf("Enter file name please!!!\n");
-      return;
-    }
-  }
-
-  file_name = istr;
+  file_name = ConsoleGetParam(param);
+  if(file_name == NULL)
+    return;
 
   printf("Read from text file: %s\n", file_name);
 
@@ -606,11 +593,11 @@ void CmdReadBmpFile(const void *param)
   UINT read_bytes;
 
   char * istr;
-  istr = strtok(argv, sep);
+  istr = strtok(argv, SEPARATOR);
   if(istr != NULL)
   {
 
-    istr = strtok(NULL, sep);
+    istr = strtok(NULL, SEPARATOR);
     if(istr == NULL)
     {
       printf("Enter file name please!!!\n");

@@ -8,6 +8,7 @@
 #endif
 
 #define CNSL_MAX_CMDS_NUM    10u // максимальное кол-во консольных команд
+#define SEPARATOR  " " // char * SEPARATOR = " ";
 // указатель обработчика команды
 typedef void (*console_command_handler_t)(const void *);
 
@@ -25,6 +26,8 @@ typedef struct
   console_command_t commands[CNSL_MAX_CMDS_NUM];
 
 } console_commands_t; // структура массива команд
+// ----------------------------------------------------------------------------
+const char * ConsoleGetParam(const void *param);
 // ----------------------------------------------------------------------------
 void ConsoleCommandAdd( char * cmd_name, 
                         console_command_handler_t handler,
