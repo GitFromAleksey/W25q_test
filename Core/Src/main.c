@@ -532,7 +532,10 @@ void CmdReadBinFile(const void *param)
 
   file_name = ConsoleGetParam(param);
   if(file_name == NULL)
+  {
+    printf("Enter file name please!!!\n");
     return;
+  }
 
   printf("Read from text file: %s\n", file_name);
 
@@ -586,26 +589,17 @@ void CmdReadBmpFile(const void *param)
   const char * file_name;
   BITMAP_FILE_HEADER_t *bmp_hdr;
 
-  char * argv = (char *)param;
   FIL fil;        /* File object */
   char data[sizeof(BITMAP_FILE_HEADER_t)]; /* Line buffer */
   uint8_t *p_bi_data;
   UINT read_bytes;
 
-  char * istr;
-  istr = strtok(argv, SEPARATOR);
-  if(istr != NULL)
+  file_name = ConsoleGetParam(param);
+  if(file_name == NULL)
   {
-
-    istr = strtok(NULL, SEPARATOR);
-    if(istr == NULL)
-    {
-      printf("Enter file name please!!!\n");
-      return;
-    }
+    printf("Enter file name please!!!\n");
+    return;
   }
-
-  file_name = istr;
 
   printf("Read from text file: %s\n", file_name);
 
@@ -676,14 +670,12 @@ void CmdSettingsFile(const void *param)
 
   const char * file_name = "settings.json";
 
-  printf("Read from text file: %s\n", file_name);
-
-  printf("Read from text file: %s\n", file_name);
+  printf("Read settings file: %s\n", file_name);
 
   res = f_open(&fil, file_name, FA_READ);
   if(res != FR_OK)
   {
-    printf("Error open file: %s\n", file_name);
+    printf("Error open settings file: %s\n", file_name);
     return;
   }
 
