@@ -2335,16 +2335,6 @@
               <FileType>1</FileType>
               <FilePath>..\json\lwjson\src\lwjson.c</FilePath>
             </File>
-            <File>
-              <FileName>lwjson_debug.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\json\lwjson\src\lwjson_debug.c</FilePath>
-            </File>
-            <File>
-              <FileName>lwjson_stream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\json\lwjson\src\lwjson_stream.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

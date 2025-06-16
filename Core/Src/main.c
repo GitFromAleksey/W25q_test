@@ -52,7 +52,12 @@ UART_HandleTypeDef huart1;
 SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
+FRESULT fres;
+FATFS fs;
+FIL   fp;
+DIR   dp;
 
+hmi_settings_t HmiSettings;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,14 +83,6 @@ w24qxxx_statusTypeDef WP_EnableDisable(bool enable);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-FRESULT fres;
-FATFS fs;
-FIL   fp;
-DIR   dp;
-
-
-
 void CmdMount(const void *param)
 {
   fres = f_mount(&fs, "0:", 1);
@@ -94,7 +91,7 @@ void CmdMount(const void *param)
   else
     printf("Mount error res: %d", fres);
 }
-
+// ----------------------------------------------------------------------------
 void CmdReadDir(const void *param)
 {
     FRESULT res;
@@ -129,8 +126,7 @@ void CmdReadDir(const void *param)
         printf("Failed to open \"%s\". (%u)\r\n", path, res);
     }
 }
-
-
+// ----------------------------------------------------------------------------
 char * sep = " ";
 char * file_name = "FatFsInterface.c";
 void CmdReadTextFile(const void *param)
@@ -167,7 +163,7 @@ void CmdReadTextFile(const void *param)
 
   f_close(&fil);
 }
-
+// ----------------------------------------------------------------------------
 void CmdReadBinFile(const void *param)
 {
   FRESULT res;
@@ -208,7 +204,7 @@ void CmdReadBinFile(const void *param)
 
   f_close(&fil);
 }
-
+// ----------------------------------------------------------------------------
 #pragma pack(push, 1)
 typedef struct
 {
@@ -237,9 +233,7 @@ typedef struct
 //  uint8_t data;
 } BITMAP_FILE_HEADER_t;       // структура заголовка файла 
 #pragma pack(pop)
-
-
-
+// ----------------------------------------------------------------------------
 void CmdReadBmpFile(const void *param)
 {
   FRESULT res;
@@ -300,17 +294,6 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
             );
 
     printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
-
-//    p_bi_data = &bmp_hdr->data;
-
-
-//    lcdSetCursor(0, 0);
-//    for(int i = bmp_hdr->bfOffBits; i < sizeof(data); ++i)
-//    {
-//      f_read(&fil, data, 3, &read_bytes);
-//      lcdDrawPixel(0, i-bmp_hdr->bfOffBits, data[i]);
-//      printf("%X(%X);", data[i], *(p_bi_data++));
-//    }
   }
 
   printf("\r\n");
@@ -322,35 +305,22 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
   {
     for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
     {
-    //void lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color)
-
       f_read(&fil, data, 3, &read_bytes);
-//      pixel  = (data[0] & 0x1F);      // COLOR_BLUE (uint16_t)(0x001F) // 0000 0000 0001 1111
-//      pixel |= (data[1] & 0x1F)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
-//      pixel |= (data[2] & 0x3F)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
 
       pixel  = 0;
-
-      pixel |= data[0]>>3;      // COLOR_BLUE (uint16_t)(0x001F) // 0000 0000 0001 1111
+      pixel |= data[0]>>3;        // COLOR_BLUE (uint16_t)(0x001F)  // 0000 0000 0001 1111
       pixel |= (data[1]>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
-      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
+      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800)   // 1111 1000 0000 0000
 
-//      pixel |= (data[0] & 0xF8);      // COLOR_BLUE (uint16_t)(0x001F) // 0000 0000 0001 1111
-//      pixel |= ((data[2] & 0xF8)>>3)<<11;  // COLOR_RED (uint16_t)(0xF800) // 1111 1000 0000 0000
-//      pixel |= ((data[1] & 0xFC)>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
       lcdDrawPixel(y, x, pixel);
     }
     // пропуск выравивающих (до 4-х) байт
-    for(int x = 0; x < padding; ++x)
-    {
-      f_read(&fil, data, 1, &read_bytes);
-    }
+    f_read(&fil, data, padding, &read_bytes);
   }
 
   f_close(&fil);
 }
 // ----------------------------------------------------------------------------
-hmi_settings_t HmiSettings;
 void CmdSettingsFile(const void *param)
 {
   FRESULT res;
@@ -461,22 +431,7 @@ int main(void)
   lcdBacklightOn();
   lcdInit();
   lcdSetOrientation(LCD_ORIENTATION_LANDSCAPE);
-  
-//  lcdFillRGB(COLOR_BLACK);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_BLUE);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_RED);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_GREEN);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_CYAN);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_MAGENTA);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_YELLOW);
-//  HAL_Delay(500);
-//  lcdFillRGB(COLOR_WHITE);
+
   HAL_Delay(500);
   lcdTest();
   CmdMount(NULL);
