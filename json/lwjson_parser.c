@@ -29,7 +29,7 @@ static lwjson_token_t tokens[128];
 static lwjson_t lwjson;
 
 //const char * test_json = "{\"mykey\":\"myvalue\"}";
-const char * test_json_str = "{\"mykey\":\"myvalue\", \"mykey2\":\"myvalue2\"}";
+const char * test_json_str = "{\"mykey\":\"myvalue\", \"mykey2\":\"myvalue2\"}"; // TODO удалить
 // ----------------------------------------------------------------------------
 static bool TokenNameEqual(const lwjson_token_t* tkn, const char * name)
 {

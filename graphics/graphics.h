@@ -39,7 +39,7 @@ typedef struct
   uint32_t lcdFrameArraySize; // размер массива lcdFrameArray
   void (*setCursorCB)(uint16_t x, uint16_t y);
   void (*drawPixelCB)(uint16_t x, uint16_t y, uint16_t color);
-
+  void (*drawPixelsCB)(uint16_t x, uint16_t y, uint16_t *data, uint32_t dataLength);
 } graphics_init_t;
 
 int GraphicsInit(graphics_init_t * init);

@@ -728,7 +728,7 @@ void LcdSetup(void)
   lcdBacklightOff();
   lcdInit();
   lcdBacklightOn();
-  lcdSetOrientation(LCD_ORIENTATION_LANDSCAPE);
+  lcdSetOrientation(LCD_ORIENTATION_PORTRAIT); // (LCD_ORIENTATION_LANDSCAPE);
 }
 // ----------------------------------------------------------------------------
 void GraphicsSetup(void)
@@ -738,8 +738,9 @@ void GraphicsSetup(void)
   ginit.lcdFrameArray     = NULL; // LcdFrameArray;
   ginit.lcdFrameArraySize = 0; // LCD_PIXEL_COUNT;
 
-  ginit.drawPixelCB = lcdDrawPixel;
-  ginit.setCursorCB = lcdSetCursor;
+  ginit.drawPixelCB   = lcdDrawPixel;
+  ginit.drawPixelsCB  = lcdDrawPixels;
+  ginit.setCursorCB   = lcdSetCursor;
 
   GraphicsInit(&ginit);
 }
