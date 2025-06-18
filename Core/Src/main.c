@@ -140,14 +140,53 @@ int main(void)
   lcdTest();
   CmdMount(NULL);
   CmdSettingsFile(NULL);
+  
+//  GraphicsDrawBMP(SettingsGetFrameFileName(&HmiSettings, 1), 0, 0);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int frame_num = 0;
+  int primitive_num = 0;
+  int frame_count = SettingsGetFrameCount(&HmiSettings);
+  uint32_t ticks = HAL_GetTick();
+
   while (1)
   {
     HAL_Delay(10);
     ConsoleRun();
+
+//    continue;
+
+    if( (HAL_GetTick() - ticks) > 3000 )
+    {
+      ticks = HAL_GetTick();
+      GraphicsDrawBMP(SettingsGetFrameFileName(&HmiSettings, frame_num), 
+                                    SettingsGetFrameX(&HmiSettings, frame_num),
+                                    SettingsGetFrameY(&HmiSettings, frame_num));
+
+
+      HAL_Delay(10);
+      primitive_num = SettingsGetFramePrimitivesCount(&HmiSettings, frame_num);
+//      printf("primitive_num: %u\n", primitive_num);
+
+      while(--primitive_num >= 0)
+      {
+//        printf("primitive_num: %d\n", primitive_num);
+
+        const char * p_f = SettingsGetFramePrimitiveFileName(&HmiSettings, frame_num, primitive_num);
+
+        GraphicsDrawBMP(SettingsGetFramePrimitiveFileName(&HmiSettings, frame_num, primitive_num),
+                        SettingsGetPrinitiveX(&HmiSettings, frame_num, primitive_num),
+                        SettingsGetPrinitiveY(&HmiSettings, frame_num, primitive_num));
+//        printf("Prim file: %.s\n", 10, p_f);
+//        printf("Prim file: %s\n", p_f);
+        HAL_Delay(10);
+      }
+
+      if(++frame_num >= frame_count)
+        frame_num = 0;
+    }
 
     /* USER CODE END WHILE */
 
@@ -422,7 +461,6 @@ int stdin_getchar(void)
   }
   else
     return '\n';
-
 }
 // ----------------------------------------------------------------------------
 void CmdMount(const void *param)
@@ -688,7 +726,7 @@ void CmdSettingsFile(const void *param)
     return;
   }
 
-  LwjsonParse(&HmiSettings, json_data);
+  SettingsParse(&HmiSettings, json_data);
 
 //  for(int i = 0; i < read_bytes; ++i)
 //  {

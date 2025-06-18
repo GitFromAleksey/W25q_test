@@ -372,7 +372,7 @@ static int FindFrames(hmi_settings_t *hmi_settings, const lwjson_token_t* _tkn)
   return 0;
 }
 // ----------------------------------------------------------------------------
-void LwjsonParse(hmi_settings_t *hmi_settings, const char * json)
+void SettingsParse(hmi_settings_t *hmi_settings, const char * json)
 {
   lwjson_token_t* first_tkn;
 
@@ -464,9 +464,153 @@ void LwjsonParse(hmi_settings_t *hmi_settings, const char * json)
 
     frame = frame->NextPrimitive;
   }
-
 }
 // ----------------------------------------------------------------------------
+static int GetPrimitivesListSize(primitive_t *primitives_list)
+{
+  int primitive_count = 0;
+  primitive_t *primitive = NULL;
+
+  if(primitives_list == NULL)
+    return 0;
+
+  primitive = primitives_list;
+  while(primitive != NULL)
+  {
+    primitive = primitive->NextPrimitive;
+    ++primitive_count;
+  }
+  return primitive_count;
+}
+// ----------------------------------------------------------------------------
+static primitive_t * GetPrimitiveByNum(primitive_t *primitives_list, uint16_t primitive_num)
+{
+  uint16_t primitive_count = 0;
+  primitive_t *primitive = NULL;
+
+  if(primitives_list == NULL)
+    return NULL;
+
+  primitive = primitives_list;
+  while(primitive != NULL)
+  {
+    if(primitive_count == primitive_num)
+      return primitive;
+    primitive = primitive->NextPrimitive;
+    ++primitive_count;
+  }
+
+  return primitive;
+}
+// ----------------------------------------------------------------------------
+static const char * GetPrinitiveFileName(primitive_t *primitive)
+{
+  return primitive->ImageFileName;
+}
+// ----------------------------------------------------------------------------
+static int GetPrinitiveX(primitive_t *primitive)
+{
+  if(primitive == NULL)
+    return 0;
+
+  return primitive->CoordinatesXY.x;
+}
+// ----------------------------------------------------------------------------
+static int GetPrinitiveY(primitive_t *primitive)
+{
+  if(primitive == NULL)
+    return 0;
+
+  return primitive->CoordinatesXY.y;
+}
+// ----------------------------------------------------------------------------
+int SettingsGetFrameCount(hmi_settings_t *hmi_settings)
+{
+  int frame_count = 0;
+  primitive_t *frame = NULL;
+
+  if(hmi_settings == NULL)
+    return 0;
+
+  frame_count = GetPrimitivesListSize(hmi_settings->FrameList);
+
+  return frame_count;
+}
+// ----------------------------------------------------------------------------
+static primitive_t * GetFrameByNum(hmi_settings_t *hmi_settings, uint16_t frame_num)
+{
+  primitive_t *frame = NULL;
+
+  if(hmi_settings == NULL)
+    return NULL;
+
+  frame = GetPrimitiveByNum(hmi_settings->FrameList, frame_num);
+
+  return frame;
+}
+// ----------------------------------------------------------------------------
+const char * SettingsGetFrameFileName(hmi_settings_t * hmi_settings,
+                                                            uint16_t frame_num)
+{
+  primitive_t *frame = GetFrameByNum(hmi_settings, frame_num);
+
+  return GetPrinitiveFileName(frame);
+}
+// ----------------------------------------------------------------------------
+int SettingsGetFrameX(hmi_settings_t * hmi_settings, uint16_t frame_num)
+{
+  primitive_t *frame = GetFrameByNum(hmi_settings, frame_num);
+
+  return GetPrinitiveX(frame);
+}
+// ----------------------------------------------------------------------------
+int SettingsGetFrameY(hmi_settings_t * hmi_settings, uint16_t frame_num)
+{
+  primitive_t *frame = GetFrameByNum(hmi_settings, frame_num);
+
+  return GetPrinitiveY(frame);
+}
+// ----------------------------------------------------------------------------
+int SettingsGetFramePrimitivesCount(hmi_settings_t * hmi_settings, 
+                                                            uint16_t frame_num)
+{
+  int primitives_count = 0;
+  primitive_t * frame = GetFrameByNum(hmi_settings, frame_num);
+
+  primitives_count = GetPrimitivesListSize(frame->OwnPrimitivesList);
+
+  return primitives_count;
+}
+// ----------------------------------------------------------------------------
+const char * SettingsGetFramePrimitiveFileName(hmi_settings_t * hmi_settings,
+                                                        uint16_t frame_num,
+                                                        uint16_t primitive_num)
+{
+  primitive_t *frame = GetFrameByNum(hmi_settings, frame_num);
+  primitive_t *primitive = GetPrimitiveByNum(frame->OwnPrimitivesList, primitive_num);
+
+  return GetPrinitiveFileName(primitive);
+}
+// ----------------------------------------------------------------------------
+int SettingsGetPrinitiveX(hmi_settings_t * hmi_settings,
+                                                        uint16_t frame_num,
+                                                        uint16_t primitive_num)
+{
+  primitive_t *frame = GetFrameByNum(hmi_settings, frame_num);
+  primitive_t *primitive = GetPrimitiveByNum(frame->OwnPrimitivesList, primitive_num);
+
+  return primitive->CoordinatesXY.x;
+}
+// ----------------------------------------------------------------------------
+int SettingsGetPrinitiveY(hmi_settings_t * hmi_settings,
+                                                        uint16_t frame_num,
+                                                        uint16_t primitive_num)
+{
+  primitive_t *frame = GetFrameByNum(hmi_settings, frame_num);
+  primitive_t *primitive = GetPrimitiveByNum(frame->OwnPrimitivesList, primitive_num);
+
+  return primitive->CoordinatesXY.y;
+}
 
 #ifdef __cplusplus
 }

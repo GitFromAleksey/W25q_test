@@ -101,7 +101,29 @@ typedef struct
 
 } hmi_settings_t;
 // ----------------------------------------------------------------------------
-void LwjsonParse(hmi_settings_t *hmi_settings, const char * json);
+void SettingsParse(hmi_settings_t *hmi_settings, const char * json);
+// ----------------------------------------------------------------------------
+int SettingsGetFrameCount(hmi_settings_t *hmi_settings);
+// ----------------------------------------------------------------------------
+const char * SettingsGetFrameFileName(hmi_settings_t *hmi_settings, 
+                                                            uint16_t frame_num);
+// ----------------------------------------------------------------------------
+int SettingsGetFrameX(hmi_settings_t * hmi_settings, uint16_t frame_num);
+// ----------------------------------------------------------------------------
+int SettingsGetFrameY(hmi_settings_t * hmi_settings, uint16_t frame_num);
+// ----------------------------------------------------------------------------
+int SettingsGetFramePrimitivesCount(hmi_settings_t *hmi_settings, 
+                                                        uint16_t frame_num);
+// ----------------------------------------------------------------------------
+const char * SettingsGetFramePrimitiveFileName(hmi_settings_t * hmi_settings,
+                                                        uint16_t frame_num,
+                                                        uint16_t primitive_num);
+// ----------------------------------------------------------------------------
+int SettingsGetPrinitiveX(hmi_settings_t * hmi_settings, uint16_t frame_num,
+                                                        uint16_t primitive_num);
+// ----------------------------------------------------------------------------
+int SettingsGetPrinitiveY(hmi_settings_t * hmi_settings, uint16_t frame_num,
+                                                        uint16_t primitive_num);
 // ----------------------------------------------------------------------------
 
 #ifdef __cplusplus

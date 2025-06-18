@@ -78,31 +78,28 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
 
   uint16_t pixel = 0;
   int padding = (4 - (bmp_hdr->info.biWidth*3 % 4)) % 4;
-// выделение памяти для чтения линий из файла
-  uint8_t *data_line = malloc( (bmp_hdr->info.biWidth*3) + padding);
-// будем использовать выделенную память и для хранения пикселей
-  uint16_t *data_pixels = (uint16_t *)data_line;
-  if(data_line == NULL)
-    return -1;
 
   Init.setCursorCB(x_pos, y_pos);
   for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
   {
-    // чтение линии картинки из файла
-    f_read(&fil, data_line, (bmp_hdr->info.biWidth*3) + padding, &read_bytes);
+
     // перекодировка из RGB888 в RGB565
-    for(int x = 0; x < read_bytes-padding; ++x)
+    for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
     {
+      // чтение линии картинки из файла
+      f_read(&fil, data, 3, &read_bytes);
       // переводим по 3 байта в uint16_t
       tmp = (x*BMP_BYTES_PER_PIXEL);
-      pixel = RGB_24_TO_565(data_line[tmp+2], data_line[tmp+1], data_line[tmp]);
-      data_pixels[x] = pixel;
+      pixel = RGB_24_TO_565(data[2], data[1], data[0]);
+      Init.drawPixelCB(x+x_pos, y+y_pos, pixel);
     }
+        // пропуск выравивающих (до 4-х) байт
+    f_read(&fil, data, padding, &read_bytes);
     // пишем сразу всю строку
-    Init.drawPixelsCB(0+x_pos, y+y_pos, data_pixels, (read_bytes-padding)/3);
+//    Init.drawPixelsCB(0+x_pos, y+y_pos, data_pixels, (read_bytes-padding)/3);
   }
 
-  free(data_line);
+//  free(data_line);
   f_close(&fil);
 }
 // ----------------------------------------------------------------------------
