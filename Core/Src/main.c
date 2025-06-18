@@ -92,6 +92,7 @@ void CmdReadBmpFile(const void *param);
 // ----------------------------------------------------------------------------
 void CmdSettingsFile(const void *param);
 // ----------------------------------------------------------------------------
+void SystemSetup(void);
 /* USER CODE END 0 */
 
 /**
@@ -129,27 +130,8 @@ int main(void)
   MX_FATFS_Init();
   MX_FSMC_Init();
   /* USER CODE BEGIN 2 */
-  w24qxxx_init_t init;
-  
-  init.SPI_TransmitReceive = SPI_TxRxCB;
-  init.CS_EnableDisable    = CS_EnableDisableCB;
-  init.WP_EnableDisable    = WP_EnableDisable;
-  W25Qxxx_Init(&init);
 
-  W25Qxxx_DeviceInit();
-
-  ConsoleCommandAdd("mnt",  CmdMount,        "Mount fs.");
-  ConsoleCommandAdd("ls",   CmdReadDir,      "Read directory.");
-  ConsoleCommandAdd("rft",  CmdReadTextFile, "Read text file.");
-  ConsoleCommandAdd("rfb",  CmdReadBinFile,  "Read binary file.");
-  ConsoleCommandAdd("rbm",  CmdReadBmpFile,  "Read bmp file.");
-  ConsoleCommandAdd("stp",  CmdSettingsFile, "Read settings file.");
-
-  MX_USB_DEVICE_Init();
-
-  lcdBacklightOn();
-  lcdInit();
-  lcdSetOrientation(LCD_ORIENTATION_LANDSCAPE);
+  SystemSetup();
 
   HAL_Delay(500);
   lcdTest();
@@ -710,6 +692,56 @@ void CmdSettingsFile(const void *param)
 
   free(json_data);
   f_close(&fil);
+}
+// ----------------------------------------------------------------------------
+void StorageSetup(void)
+{
+  w24qxxx_init_t init;
+
+  init.SPI_TransmitReceive = SPI_TxRxCB;
+  init.CS_EnableDisable    = CS_EnableDisableCB;
+  init.WP_EnableDisable    = WP_EnableDisable;
+  W25Qxxx_Init(&init);
+
+  W25Qxxx_DeviceInit();
+
+  MX_USB_DEVICE_Init();
+}
+// ----------------------------------------------------------------------------
+void ConsoleSetup(void)
+{
+  ConsoleCommandAdd("mnt",  CmdMount,        "Mount fs.");
+  ConsoleCommandAdd("ls",   CmdReadDir,      "Read directory.");
+  ConsoleCommandAdd("rft",  CmdReadTextFile, "Read text file.");
+  ConsoleCommandAdd("rfb",  CmdReadBinFile,  "Read binary file.");
+  ConsoleCommandAdd("rbm",  CmdReadBmpFile,  "Read bmp file.");
+  ConsoleCommandAdd("stp",  CmdSettingsFile, "Read settings file.");
+}
+// ----------------------------------------------------------------------------
+void LcdSetup(void)
+{
+  lcdBacklightOff();
+  lcdInit();
+  lcdBacklightOn();
+  lcdSetOrientation(LCD_ORIENTATION_LANDSCAPE);
+}
+// ----------------------------------------------------------------------------
+void GraphicsSetup(void)
+{
+  graphics_init_t ginit;
+
+  ginit.drawPixelCB = lcdDrawPixel;
+  ginit.setCursorCB = lcdSetCursor;
+
+  GraphicsInit(&ginit);
+}
+// ----------------------------------------------------------------------------
+void SystemSetup(void)
+{
+  StorageSetup();
+  ConsoleSetup();
+  LcdSetup();
+  GraphicsSetup();
 }
 // ----------------------------------------------------------------------------
 /* USER CODE END 4 */
