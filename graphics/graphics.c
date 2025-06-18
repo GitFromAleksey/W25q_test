@@ -15,7 +15,7 @@ int GraphicsInit(graphics_init_t * init)
   return 0;
 }
 // ----------------------------------------------------------------------------
-int GraphicsDrawBMP(const char *file_name, uint16_t x, uint16_t y)
+int GraphicsDrawBMP(const char *file_name, uint16_t x_pos, uint16_t y_pos)
 {
   FRESULT res;
   FIL fil;        /* File object */
@@ -85,7 +85,7 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
   if(data_line == NULL)
     return -1;
 
-  Init.setCursorCB(0, 0);
+  Init.setCursorCB(x_pos, y_pos);
   for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
   {
     // чтение линии картинки из файла
@@ -99,7 +99,7 @@ biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
       data_pixels[x] = pixel;
     }
     // пишем сразу всю строку
-    Init.drawPixelsCB(0, y, data_pixels, (read_bytes-padding)/3);
+    Init.drawPixelsCB(0+x_pos, y+y_pos, data_pixels, (read_bytes-padding)/3);
   }
 
   free(data_line);

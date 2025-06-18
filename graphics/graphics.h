@@ -44,6 +44,6 @@ typedef struct
 
 int GraphicsInit(graphics_init_t * init);
 
-int GraphicsDrawBMP(const char *file_name, uint16_t x, uint16_t y);
+int GraphicsDrawBMP(const char *file_name, uint16_t x_pos, uint16_t y_pos);
 
 #endif /* _GRAPHICS_H_ */
