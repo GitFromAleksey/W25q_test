@@ -35,12 +35,15 @@ typedef struct
 
 typedef struct
 {
+  uint16_t *lcdFrameArray; // массив(место) в ОЗУ для работы с изображением
+  uint32_t lcdFrameArraySize; // размер массива lcdFrameArray
   void (*setCursorCB)(uint16_t x, uint16_t y);
   void (*drawPixelCB)(uint16_t x, uint16_t y, uint16_t color);
+
 } graphics_init_t;
 
 int GraphicsInit(graphics_init_t * init);
 
-int GraphicsDrawBMP(uint8_t *data, uint16_t x, uint16_t y);
+int GraphicsDrawBMP(const char *file_name, uint16_t x, uint16_t y);
 
 #endif /* _GRAPHICS_H_ */

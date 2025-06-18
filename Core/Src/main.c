@@ -37,7 +37,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define LDC_HEIGHT        ILI9341_PIXEL_HEIGHT      // 320
+#define LDC_WIDTH         ILI9341_PIXEL_WIDTH       // 240
+#define LCD_PIXEL_COUNT   (LDC_HEIGHT * LDC_WIDTH)  // 320*240=76800
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -55,6 +57,7 @@ SRAM_HandleTypeDef hsram1;
 /* USER CODE BEGIN PV */
 FATFS fs;
 hmi_settings_t HmiSettings;
+//uint16_t LcdFrameArray[LCD_PIXEL_COUNT-22050]; //[LCD_PIXEL_COUNT];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -568,80 +571,82 @@ void CmdReadBinFile(const void *param)
 // ----------------------------------------------------------------------------
 void CmdReadBmpFile(const void *param)
 {
-  FRESULT res;
-  const char * file_name;
-  BITMAP_FILE_HEADER_t *bmp_hdr;
+  const char * file_name = ConsoleGetParam(param);
+  GraphicsDrawBMP(file_name, 0, 0);
+//  FRESULT res;
+//  const char * file_name;
+//  BITMAP_FILE_HEADER_t *bmp_hdr;
 
-  FIL fil;        /* File object */
-  char data[sizeof(BITMAP_FILE_HEADER_t)]; /* Line buffer */
-  uint8_t *p_bi_data;
-  UINT read_bytes;
+//  FIL fil;        /* File object */
+//  char data[sizeof(BITMAP_FILE_HEADER_t)]; /* Line buffer */
+//  uint8_t *p_bi_data;
+//  UINT read_bytes;
 
-  file_name = ConsoleGetParam(param);
-  if(file_name == NULL)
-  {
-    printf("Enter file name please!!!\n");
-    return;
-  }
+//  file_name = ConsoleGetParam(param);
+//  if(file_name == NULL)
+//  {
+//    printf("Enter file name please!!!\n");
+//    return;
+//  }
 
-  printf("Read from text file: %s\n", file_name);
+//  printf("Read from text file: %s\n", file_name);
 
-  res = f_open(&fil, file_name, FA_READ);
+//  res = f_open(&fil, file_name, FA_READ);
 
-  if(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
-  {
-    bmp_hdr = (BITMAP_FILE_HEADER_t *)data;
+//  if(f_read(&fil, data, sizeof(data), &read_bytes) == FR_OK)
+//  {
+//    bmp_hdr = (BITMAP_FILE_HEADER_t *)data;
 
-    printf("bfType: 0x%X\r\nbfSize: %lu\r\nbfReserved1: 0x%X\r\n\
-bfReserved2: 0x%X\r\nbfOffBits: %lu\r\n",
-            bmp_hdr->bfType,
-            bmp_hdr->bfSize,
-            bmp_hdr->bfReserved1,
-            bmp_hdr->bfReserved2,
-            bmp_hdr->bfOffBits);
+//    printf("bfType: 0x%X\r\nbfSize: %lu\r\nbfReserved1: 0x%X\r\n\
+//bfReserved2: 0x%X\r\nbfOffBits: %lu\r\n",
+//            bmp_hdr->bfType,
+//            bmp_hdr->bfSize,
+//            bmp_hdr->bfReserved1,
+//            bmp_hdr->bfReserved2,
+//            bmp_hdr->bfOffBits);
 
-    printf("\r\nbiSize: %lu\r\nbiWidth: %lu\r\nbiHeight: %lu\r\nbiPlanes: %u\r\n\
-biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
-%lu\r\nbiYPelsPerMeter: %lu\r\nbiClrUsed: %lu\r\nbiClrImportant: %lu\r\n",
-            bmp_hdr->info.biSize,
-            bmp_hdr->info.biWidth,
-            bmp_hdr->info.biHeight,
-            bmp_hdr->info.biPlanes,
-            bmp_hdr->info.biBitCount,
-            bmp_hdr->info.biCompression,
-            bmp_hdr->info.biSizeImage,
-            bmp_hdr->info.biXPelsPerMeter,
-            bmp_hdr->info.biYPelsPerMeter,
-            bmp_hdr->info.biClrUsed,
-            bmp_hdr->info.biClrImportant
-            );
+//    printf("\r\nbiSize: %lu\r\nbiWidth: %lu\r\nbiHeight: %lu\r\nbiPlanes: %u\r\n\
+//biBitCount: %u\r\nbiCompression: %lu\r\nbiSizeImage: %lu\r\nbiXPelsPerMeter: \
+//%lu\r\nbiYPelsPerMeter: %lu\r\nbiClrUsed: %lu\r\nbiClrImportant: %lu\r\n",
+//            bmp_hdr->info.biSize,
+//            bmp_hdr->info.biWidth,
+//            bmp_hdr->info.biHeight,
+//            bmp_hdr->info.biPlanes,
+//            bmp_hdr->info.biBitCount,
+//            bmp_hdr->info.biCompression,
+//            bmp_hdr->info.biSizeImage,
+//            bmp_hdr->info.biXPelsPerMeter,
+//            bmp_hdr->info.biYPelsPerMeter,
+//            bmp_hdr->info.biClrUsed,
+//            bmp_hdr->info.biClrImportant
+//            );
 
-    printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
-  }
+//    printf("sizeof(BITMAP_FILE_HEADER_t): %u\r\n", sizeof(BITMAP_FILE_HEADER_t));
+//  }
 
-  printf("\r\n");
+//  printf("\r\n");
 
-  uint16_t pixel = 0;
-  int padding = (4 - (bmp_hdr->info.biWidth*3 % 4)) % 4;
-  lcdSetCursor(0, 0);
-  for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
-  {
-    for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
-    {
-      f_read(&fil, data, 3, &read_bytes);
+//  uint16_t pixel = 0;
+//  int padding = (4 - (bmp_hdr->info.biWidth*3 % 4)) % 4;
+//  lcdSetCursor(0, 0);
+//  for(int y = 0; y < bmp_hdr->info.biHeight; ++y)
+//  {
+//    for(int x = 0; x < bmp_hdr->info.biWidth; ++x)
+//    {
+//      f_read(&fil, data, 3, &read_bytes);
 
-      pixel  = 0;
-      pixel |= data[0]>>3;        // COLOR_BLUE (uint16_t)(0x001F)  // 0000 0000 0001 1111
-      pixel |= (data[1]>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
-      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800)   // 1111 1000 0000 0000
+//      pixel  = 0;
+//      pixel |= data[0]>>3;        // COLOR_BLUE (uint16_t)(0x001F)  // 0000 0000 0001 1111
+//      pixel |= (data[1]>>2)<<5;   // COLOR_GREEN (uint16_t)(0x07E0) // 0000 0111 1110 0000
+//      pixel |= (data[2]>>3)<<11;  // COLOR_RED (uint16_t)(0xF800)   // 1111 1000 0000 0000
 
-      lcdDrawPixel(y, x, pixel);
-    }
-    // пропуск выравивающих (до 4-х) байт
-    f_read(&fil, data, padding, &read_bytes);
-  }
+//      lcdDrawPixel(y, x, pixel);
+//    }
+//    // пропуск выравивающих (до 4-х) байт
+//    f_read(&fil, data, padding, &read_bytes);
+//  }
 
-  f_close(&fil);
+//  f_close(&fil);
 }
 // ----------------------------------------------------------------------------
 void CmdSettingsFile(const void *param)
@@ -729,6 +734,9 @@ void LcdSetup(void)
 void GraphicsSetup(void)
 {
   graphics_init_t ginit;
+
+  ginit.lcdFrameArray     = NULL; // LcdFrameArray;
+  ginit.lcdFrameArraySize = 0; // LCD_PIXEL_COUNT;
 
   ginit.drawPixelCB = lcdDrawPixel;
   ginit.setCursorCB = lcdSetCursor;
