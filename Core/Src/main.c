@@ -57,7 +57,6 @@ SRAM_HandleTypeDef hsram1;
 /* USER CODE BEGIN PV */
 FATFS fs;
 hmi_settings_t HmiSettings;
-//uint16_t LcdFrameArray[LCD_PIXEL_COUNT-22050]; //[LCD_PIXEL_COUNT];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -140,8 +139,16 @@ int main(void)
   lcdTest();
   CmdMount(NULL);
   CmdSettingsFile(NULL);
-  
-//  GraphicsDrawBMP(SettingsGetFrameFileName(&HmiSettings, 1), 0, 0);
+
+  if( HAL_GPIO_ReadPin(KEY1_GPIO_Port, KEY1_Pin) == GPIO_PIN_RESET )
+  {
+    HmiSettings.HmiMode = HMI_MODE_USB;
+  }
+  else
+  {
+    HmiSettings.HmiMode = HMI_MODE_RUN;
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -156,7 +163,8 @@ int main(void)
     HAL_Delay(10);
     ConsoleRun();
 
-//    continue;
+    if(HmiSettings.HmiMode == HMI_MODE_USB)
+      continue;
 
     if( (HAL_GetTick() - ticks) > 3000 )
     {
@@ -323,10 +331,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -337,6 +345,12 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : KEY1_Pin KEY0_Pin */
+  GPIO_InitStruct.Pin = KEY1_Pin|KEY0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED2_Pin LED3_Pin */
   GPIO_InitStruct.Pin = LED2_Pin|LED3_Pin;

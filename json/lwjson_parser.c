@@ -376,6 +376,7 @@ void SettingsParse(hmi_settings_t *hmi_settings, const char * json)
 {
   lwjson_token_t* first_tkn;
 
+  hmi_settings->HmiMode = HMI_MODE_NONE;
 
   lwjson_init(&lwjson, tokens, LWJSON_ARRAYSIZE(tokens));
 
