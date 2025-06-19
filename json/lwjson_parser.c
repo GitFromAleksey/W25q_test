@@ -538,6 +538,21 @@ int SettingsGetFrameCount(hmi_settings_t *hmi_settings)
   return frame_count;
 }
 // ----------------------------------------------------------------------------
+int SettingsGetFrameNumByMbReg(hmi_settings_t * hmi_settings, uint16_t reg_num)
+{
+  primitive_t *frame = NULL;
+  int fcount = SettingsGetFrameCount(hmi_settings);
+
+  for(int i = 0; i < fcount; ++i)
+  {
+    frame = GetPrimitiveByNum(hmi_settings->FrameList, i);
+    if(frame->MbRegNum == reg_num)
+      return i;
+  }
+
+  return -1;
+}
+// ----------------------------------------------------------------------------
 static primitive_t * GetFrameByNum(hmi_settings_t *hmi_settings, uint16_t frame_num)
 {
   primitive_t *frame = NULL;

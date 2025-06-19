@@ -144,11 +144,11 @@ int main(void)
 
   if( HAL_GPIO_ReadPin(KEY1_GPIO_Port, KEY1_Pin) == GPIO_PIN_RESET )
   {
-    HmiSettings.HmiMode = HMI_MODE_USB;
+    HmiSettings.HmiMode = HMI_MODE_RUN;
   }
   else
   {
-    HmiSettings.HmiMode = HMI_MODE_RUN;
+    HmiSettings.HmiMode = HMI_MODE_USB;
   }
 
   /* USER CODE END 2 */
@@ -644,6 +644,8 @@ void CmdSettingsFile(const void *param)
 // ----------------------------------------------------------------------------
 void CmdWriteRegister(const void *param)
 {
+  int frame_num;
+
   int reg;
   int val;
 
@@ -659,6 +661,12 @@ void CmdWriteRegister(const void *param)
 
   printf("CmdWriteRegister. reg_str: %s, val_str: %s\n", reg_str, val_str);
   printf("CmdWriteRegister. reg: %d, val: %d\n", reg, val);
+
+  frame_num = SettingsGetFrameNumByMbReg(&HmiSettings, reg);
+
+  GraphicsDrawBMP(SettingsGetFrameFileName(&HmiSettings, frame_num), 
+                              SettingsGetFrameX(&HmiSettings, frame_num),
+                              SettingsGetFrameY(&HmiSettings, frame_num));
 }
 // ----------------------------------------------------------------------------
 void StorageSetup(void)

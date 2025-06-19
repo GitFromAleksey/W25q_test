@@ -113,6 +113,8 @@ void SettingsParse(hmi_settings_t *hmi_settings, const char * json);
 // ----------------------------------------------------------------------------
 int SettingsGetFrameCount(hmi_settings_t *hmi_settings);
 // ----------------------------------------------------------------------------
+int SettingsGetFrameNumByMbReg(hmi_settings_t * hmi_settings, uint16_t reg_num);
+// ----------------------------------------------------------------------------
 const char * SettingsGetFrameFileName(hmi_settings_t *hmi_settings, 
                                                             uint16_t frame_num);
 // ----------------------------------------------------------------------------
@@ -133,6 +135,7 @@ int SettingsGetPrinitiveX(hmi_settings_t * hmi_settings, uint16_t frame_num,
 int SettingsGetPrinitiveY(hmi_settings_t * hmi_settings, uint16_t frame_num,
                                                         uint16_t primitive_num);
 // ----------------------------------------------------------------------------
+
 
 #ifdef __cplusplus
 }
