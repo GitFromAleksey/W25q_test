@@ -27,7 +27,7 @@ typedef struct
 
 } console_commands_t; // структура массива команд
 // ----------------------------------------------------------------------------
-const char * ConsoleGetParam(const void *param);
+const char * ConsoleGetParam(const void *param, int param_num);
 // ----------------------------------------------------------------------------
 void ConsoleCommandAdd( char * cmd_name, 
                         console_command_handler_t handler,

@@ -9,24 +9,27 @@ static uint8_t rxbuf[20];
 static console_commands_t ConsoleCommands = {0};
 
 // ----------------------------------------------------------------------------
-const char * ConsoleGetParam(const void *param)
+const char * ConsoleGetParam(const void *param, int param_num)
 {
+  static char argv_buf[50];
+
   char * argv = (char *)param;
   const char * istr;
 
-  istr = strtok(argv, SEPARATOR);
+  // 
+  strcpy(argv_buf, argv);
+  // пропускаем команду
+  istr = strtok(argv_buf, SEPARATOR);
 
-  if(istr != NULL)
+  while(param_num-- > 0)
   {
     istr = strtok(NULL, SEPARATOR);
+
     if(istr == NULL)
-    {
       return NULL;
-    }
-    return istr;
   }
 
-  return NULL;
+  return istr;
 }
 // ----------------------------------------------------------------------------
 void CmdHelp(const void *param)
