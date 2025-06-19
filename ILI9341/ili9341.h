@@ -69,6 +69,7 @@ void					lcdInit(void);
 void              		lcdTest(void);
 void					lcdFillRGB(uint16_t color);
 void					lcdDrawPixel(uint16_t x, uint16_t y, uint16_t color);
+void          lcdDrawPixels(uint16_t x, uint16_t y, uint16_t *data, uint32_t dataLength);
 void              		lcdDrawHLine(uint16_t x0, uint16_t x1, uint16_t y, uint16_t color);
 void              		lcdDrawVLine(uint16_t x, uint16_t y0, uint16_t y1, uint16_t color);
 void 					lcdDrawLine(int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
