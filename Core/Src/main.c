@@ -96,7 +96,9 @@ void CmdSettingsFile(const void *param);
 // ----------------------------------------------------------------------------
 void CmdWriteRegister(const void *param);
 // ----------------------------------------------------------------------------
-void ShowWindow(hmi_settings_t * hmi_settings, uint16_t mb_reg_num);
+void HmiRun(hmi_settings_t * hmi_settings);
+// ----------------------------------------------------------------------------
+void HmiShowWindow(hmi_settings_t * hmi_settings, uint16_t mb_reg_num);
 // ----------------------------------------------------------------------------
 
 void SystemSetup(void);
@@ -145,7 +147,7 @@ int main(void)
   CmdMount(NULL);
   CmdSettingsFile(NULL);
 
-  if( HAL_GPIO_ReadPin(KEY1_GPIO_Port, KEY1_Pin) == GPIO_PIN_RESET )
+  if( HAL_GPIO_ReadPin(KEY1_GPIO_Port, KEY1_Pin) != GPIO_PIN_RESET )
   {
     HmiSettings.HmiMode = HMI_MODE_RUN;
   }
@@ -171,34 +173,10 @@ int main(void)
     if(HmiSettings.HmiMode == HMI_MODE_USB)
       continue;
 
-    if( (HAL_GetTick() - ticks) > 3000 )
+    if( (HAL_GetTick() - ticks) > 100 )
     {
       ticks = HAL_GetTick();
-      GraphicsDrawBMP(SettingsGetFrameFileName(&HmiSettings, frame_num), 
-                                    SettingsGetFrameX(&HmiSettings, frame_num),
-                                    SettingsGetFrameY(&HmiSettings, frame_num));
-
-
-      HAL_Delay(10);
-      primitive_num = SettingsGetFramePrimitivesCount(&HmiSettings, frame_num);
-//      printf("primitive_num: %u\n", primitive_num);
-
-      while(--primitive_num >= 0)
-      {
-//        printf("primitive_num: %d\n", primitive_num);
-
-        const char * p_f = SettingsGetFramePrimitiveFileName(&HmiSettings, frame_num, primitive_num);
-
-        GraphicsDrawBMP(SettingsGetFramePrimitiveFileName(&HmiSettings, frame_num, primitive_num),
-                        SettingsGetPrinitiveX(&HmiSettings, frame_num, primitive_num),
-                        SettingsGetPrinitiveY(&HmiSettings, frame_num, primitive_num));
-//        printf("Prim file: %.s\n", 10, p_f);
-//        printf("Prim file: %s\n", p_f);
-        HAL_Delay(10);
-      }
-
-      if(++frame_num >= frame_count)
-        frame_num = 0;
+      HmiRun(&HmiSettings);
     }
 
     /* USER CODE END WHILE */
@@ -665,10 +643,20 @@ void CmdWriteRegister(const void *param)
   printf("CmdWriteRegister. reg_str: %s, val_str: %s\n", reg_str, val_str);
   printf("CmdWriteRegister. reg: %d, val: %d\n", reg, val);
 
-  ShowWindow(&HmiSettings, reg);
+//  HmiShowWindow(&HmiSettings, reg);
+  HmiSettings.CurrWindId = reg;
 }
 // ----------------------------------------------------------------------------
-void ShowWindow(hmi_settings_t * hmi_settings, uint16_t mb_reg_num)
+void HmiRun(hmi_settings_t * hmi_settings)
+{
+  if(hmi_settings->StartWindId != hmi_settings->CurrWindId)
+  {
+    hmi_settings->StartWindId = hmi_settings->CurrWindId;
+    HmiShowWindow(hmi_settings, hmi_settings->CurrWindId);
+  }
+}
+// ----------------------------------------------------------------------------
+void HmiShowWindow(hmi_settings_t * hmi_settings, uint16_t mb_reg_num)
 {
   primitive_t * frame = SettingsGetFrameByMbReg(hmi_settings, mb_reg_num);
   primitive_t * primitive;
