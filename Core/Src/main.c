@@ -96,6 +96,9 @@ void CmdSettingsFile(const void *param);
 // ----------------------------------------------------------------------------
 void CmdWriteRegister(const void *param);
 // ----------------------------------------------------------------------------
+void ShowWindow(hmi_settings_t * hmi_settings, uint16_t mb_reg_num);
+// ----------------------------------------------------------------------------
+
 void SystemSetup(void);
 /* USER CODE END 0 */
 
@@ -662,11 +665,35 @@ void CmdWriteRegister(const void *param)
   printf("CmdWriteRegister. reg_str: %s, val_str: %s\n", reg_str, val_str);
   printf("CmdWriteRegister. reg: %d, val: %d\n", reg, val);
 
-  frame_num = SettingsGetFrameNumByMbReg(&HmiSettings, reg);
+  ShowWindow(&HmiSettings, reg);
+}
+// ----------------------------------------------------------------------------
+void ShowWindow(hmi_settings_t * hmi_settings, uint16_t mb_reg_num)
+{
+  primitive_t * frame = SettingsGetFrameByMbReg(hmi_settings, mb_reg_num);
+  primitive_t * primitive;
 
-  GraphicsDrawBMP(SettingsGetFrameFileName(&HmiSettings, frame_num), 
-                              SettingsGetFrameX(&HmiSettings, frame_num),
-                              SettingsGetFrameY(&HmiSettings, frame_num));
+  if(frame == NULL)
+    return;
+
+  const char * file = GetPrinitiveFileName(frame);
+  
+  if(file == NULL)
+    return;
+
+  GraphicsDrawBMP(file, frame->CoordinatesXY.x, frame->CoordinatesXY.y);
+
+  // отрисовываем римитивы окна
+  primitive = frame->OwnPrimitivesList;
+
+  while(primitive != NULL)
+  {
+    GraphicsDrawBMP(primitive->ImageFileName,
+                    primitive->CoordinatesXY.x, primitive->CoordinatesXY.y);
+
+    primitive = GetNextPrimitive(primitive);
+  }
+
 }
 // ----------------------------------------------------------------------------
 void StorageSetup(void)

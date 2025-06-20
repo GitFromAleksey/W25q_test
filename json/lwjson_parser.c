@@ -49,7 +49,7 @@ static bool TokenNameEqual(const lwjson_token_t* tkn, const char * name)
   return true;
 }
 // ----------------------------------------------------------------------------
-int GetIntArray(int_array_t *array, const lwjson_token_t* sub_tkn)
+static int GetIntArray(int_array_t *array, const lwjson_token_t* sub_tkn)
 {
   const lwjson_token_t * next_item = lwjson_get_first_child(sub_tkn);
 
@@ -83,7 +83,7 @@ int GetIntArray(int_array_t *array, const lwjson_token_t* sub_tkn)
   return 0;
 }
 // ----------------------------------------------------------------------------
-int GetSizeXY(x_y_pair_t *size, const lwjson_token_t* sub_tkn)
+static int GetSizeXY(x_y_pair_t *size, const lwjson_token_t* sub_tkn)
 {
   int_array_t array;
 
@@ -101,7 +101,7 @@ int GetSizeXY(x_y_pair_t *size, const lwjson_token_t* sub_tkn)
   return 0;
 }
 // ----------------------------------------------------------------------------
-int GetString(primitive_t *new_element, const lwjson_token_t* tkn)
+static int GetString(primitive_t *new_element, const lwjson_token_t* tkn)
 {
   size_t file_name_size;
   const char * file_name = lwjson_get_val_string(tkn, &file_name_size);
@@ -133,7 +133,7 @@ static primitive_t * CreateNewBlankPrimitive(void)
   return new_blank_primitive;
 }
 // ----------------------------------------------------------------------------
-void PrimitiveToListAppend(primitive_t ** primitive_list, primitive_t * primitive_child)
+static void PrimitiveToListAppend(primitive_t ** primitive_list, primitive_t * primitive_child)
 {
 
   if(*primitive_list == NULL)
@@ -467,7 +467,7 @@ void SettingsParse(hmi_settings_t *hmi_settings, const char * json)
   }
 }
 // ----------------------------------------------------------------------------
-static int GetPrimitivesListSize(primitive_t *primitives_list)
+int GetPrimitivesListSize(primitive_t *primitives_list)
 {
   int primitive_count = 0;
   primitive_t *primitive = NULL;
@@ -483,6 +483,9 @@ static int GetPrimitivesListSize(primitive_t *primitives_list)
   }
   return primitive_count;
 }
+// ----------------------------------------------------------------------------
+primitive_t * GetNextPrimitive(primitive_t *primitives)
+{ return primitives->NextPrimitive; }
 // ----------------------------------------------------------------------------
 static primitive_t * GetPrimitiveByNum(primitive_t *primitives_list, uint16_t primitive_num)
 {
@@ -504,8 +507,10 @@ static primitive_t * GetPrimitiveByNum(primitive_t *primitives_list, uint16_t pr
   return primitive;
 }
 // ----------------------------------------------------------------------------
-static const char * GetPrinitiveFileName(primitive_t *primitive)
+const char * GetPrinitiveFileName(primitive_t *primitive)
 {
+  if(primitive == NULL)
+    return NULL;
   return primitive->ImageFileName;
 }
 // ----------------------------------------------------------------------------
@@ -627,6 +632,50 @@ int SettingsGetPrinitiveY(hmi_settings_t * hmi_settings,
 
   return primitive->CoordinatesXY.y;
 }
+// ----------------------------------------------------------------------------
+primitive_t * SettingsGetFrameByMbReg(hmi_settings_t * hmi_settings, 
+                                                              uint16_t reg_num)
+{
+  primitive_t *frame = NULL;
+  int fcount = SettingsGetFrameCount(hmi_settings);
+
+  frame = hmi_settings->FrameList;
+  while(frame != NULL)
+  {
+    if(frame->MbRegNum == reg_num)
+      return frame;
+    frame = GetNextPrimitive(frame);
+  }
+
+  return frame;
+
+//static int GetPrimitivesListSize(primitive_t *primitives_list)
+//static primitive_t * GetPrimitiveByNum(primitive_t *primitives_list, uint16_t primitive_num)
+//static const char * GetPrinitiveFileName(primitive_t *primitive)
+//int SettingsGetFrameCount(hmi_settings_t *hmi_settings)
+//int SettingsGetFrameNumByMbReg(hmi_settings_t * hmi_settings, uint16_t reg_num)
+//static primitive_t * GetFrameByNum(hmi_settings_t *hmi_settings, uint16_t frame_num)
+//const char * SettingsGetFrameFileName(hmi_settings_t * hmi_settings,
+//                                                            uint16_t frame_num)
+//int SettingsGetFrameX(hmi_settings_t * hmi_settings, uint16_t frame_num)
+//int SettingsGetFrameY(hmi_settings_t * hmi_settings, uint16_t frame_num)
+}
+// ----------------------------------------------------------------------------
+primitive_t * SettingsGetPrimitiveByMbReg(primitive_t *frame, uint16_t reg_num)
+{
+  primitive_t *primitive = NULL;
+
+  primitive = frame->OwnPrimitivesList;
+  while(primitive != NULL)
+  {
+    if(primitive->MbRegNum == reg_num)
+      return primitive;
+    primitive = GetNextPrimitive(primitive);
+  }
+
+  return primitive;
+}
+// ----------------------------------------------------------------------------
 
 #ifdef __cplusplus
 }
